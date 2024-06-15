@@ -1,3 +1,9 @@
+#### 0.1.3 (2024-06-15)
+
+##### Continuous Integration
+
+*  invoke yarn install before publish ([cea59ad4](https://github.com/EffectiveRange/vscodeext-er-dev/commit/cea59ad41217be79f6b82e07b496a682d5217fc9))
+
 #### 0.1.2 (2024-06-15)
 
 ##### Continuous Integration
