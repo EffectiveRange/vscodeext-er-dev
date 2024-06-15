@@ -33,6 +33,7 @@ export async function showExecQuickPick(items: string[]): Promise<string | undef
 }
 
 export async function execShell(
+    channel: vscode.LogOutputChannel,
     wsp: vscode.WorkspaceFolder,
     name: string,
     command: string,
@@ -42,7 +43,7 @@ export async function execShell(
         executable: '/bin/bash',
         shellArgs: ['-c'],
     });
-    console.log(`Creating Shell execution ${command} ${args}`);
+    channel.info(`Creating Shell execution ${command} ${args}`);
     let task = new vscode.Task(
         {
             type: 'shell',
@@ -79,6 +80,7 @@ interface ShellExecResult {
     stderr: string | Error;
 }
 export async function execShellWithOutput(
+    output: vscode.LogOutputChannel,
     wsp: vscode.WorkspaceFolder,
     name: string,
     command: string,
@@ -86,6 +88,7 @@ export async function execShellWithOutput(
 ): Promise<ShellExecResult> {
     const sessionid = v4();
     const [exec, res] = await execShell(
+        output,
         wsp,
         name,
         command,
@@ -116,6 +119,7 @@ export async function execShellWithOutput(
 }
 
 export async function sshTask(
+    output: vscode.LogOutputChannel,
     wsp: vscode.WorkspaceFolder,
     device: ErDeviceModel,
     command: string,
@@ -123,6 +127,7 @@ export async function sshTask(
 ): Promise<[vscode.TaskExecution, Promise<number | undefined>]> {
     const remoteCmd = `${command} ${args.join(' ')}`;
     return execShell(
+        output,
         wsp,
         `Remote Exec:${device}`,
         'ssh',
@@ -140,22 +145,25 @@ export async function sshTask(
 }
 
 export async function sshExec(
+    output: vscode.LogOutputChannel,
     wsp: vscode.WorkspaceFolder,
     device: ErDeviceModel,
     command: string,
     ...args: string[]
 ): Promise<number | undefined> {
-    const [exec, res] = await sshTask(wsp, device, command, ...args);
+    const [exec, res] = await sshTask(output, wsp, device, command, ...args);
     return res;
 }
 
 export async function scpExec(
+    output: vscode.LogOutputChannel,
     wsp: vscode.WorkspaceFolder,
     device: ErDeviceModel,
     target: string,
     ...source: string[]
 ) {
     const [exec, res] = await execShell(
+        output,
         wsp,
         `Remote SCP:${device}`,
         'scp',

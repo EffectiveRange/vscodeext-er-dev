@@ -20,7 +20,7 @@
     "onCommand:workbench.action.tasks.runTask",
     "onDebug"
   ],
-  "main": "./dist/extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "keybindings": [
       {

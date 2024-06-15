@@ -10,6 +10,7 @@ import { execShellWithOutput, scpExec, showExecQuickPick, sshExec, sshTask } fro
 import { ErDeviceModel } from './api';
 import { getRandomPort } from './utils';
 import { v4 as uuidv4 } from 'uuid';
+import { ERExtension } from './erextension';
 
 export class PythonExecution extends IErDevExecutions {
     public async cleanupRemoteDebugger(
@@ -21,6 +22,7 @@ export class PythonExecution extends IErDevExecutions {
             return;
         }
         const res = await sshExec(
+            this.erext.logChannel,
             workspaceFolder,
             device,
             'sudo',
@@ -45,6 +47,7 @@ export class PythonExecution extends IErDevExecutions {
             const port = getRandomPort();
             const sessionId = uuidv4();
             let [exec, res] = await sshTask(
+                this.erext.logChannel,
                 workspaceFolder,
                 device,
                 'sudo',
@@ -77,6 +80,7 @@ export class PythonExecution extends IErDevExecutions {
         device: ErDeviceModel,
     ) {
         const checkPromise = sshExec(
+            this.erext.logChannel,
             workspaceFolder,
             device,
             'python3',
@@ -87,11 +91,18 @@ export class PythonExecution extends IErDevExecutions {
         const debugpyScriptUri = vscode.Uri.file(
             path.join(__dirname, '..', 'resources', 'scripts', 'start_debugpy.sh'),
         );
-        const copyPromise = scpExec(workspaceFolder, device, '/tmp/', debugpyScriptUri.fsPath);
+        const copyPromise = scpExec(
+            this.erext.logChannel,
+            workspaceFolder,
+            device,
+            '/tmp/',
+            debugpyScriptUri.fsPath,
+        );
         const [checkResult, copyResult] = await Promise.all([checkPromise, copyPromise]);
 
         if (checkResult !== 0) {
             const installExecResult = await sshExec(
+                this.erext.logChannel,
                 workspaceFolder,
                 device,
                 'sudo',
@@ -120,6 +131,7 @@ export class PythonExecution extends IErDevExecutions {
         device: ErDeviceModel,
     ): Promise<vscode.DebugConfiguration> {
         const out = await execShellWithOutput(
+            this.erext.logChannel,
             workspaceFolder,
             'Python package query',
             'python3',
@@ -184,8 +196,8 @@ export class PythonExecution extends IErDevExecutions {
 
     private packCmd: string;
 
-    constructor() {
-        super();
+    constructor(ext: ERExtension) {
+        super(ext);
         let packScriptUri = vscode.Uri.file(
             path.join(__dirname, '..', 'resources', 'scripts', 'pack_python.sh'),
         );

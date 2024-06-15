@@ -4,6 +4,7 @@
 
 import * as vscode from 'vscode';
 import { ErDeviceModel } from './api';
+import { ERExtension } from './erextension';
 
 interface ErrorResult {
     code: number;
@@ -27,12 +28,21 @@ export function sshConfigToDeviceModel() {}
 
 export class ErExtensionModel {
     private activeDevice?: ErDeviceModel;
+    private extension_: ERExtension;
+    constructor(extension: ERExtension) {
+        this.extension_ = extension;
+    }
+
+    get extension(): ERExtension {
+        return this.extension_;
+    }
 
     private changeEmitter = new vscode.EventEmitter<undefined | null | void>();
     readonly onChangeActiveDevices: vscode.Event<undefined | null | void> =
         this.changeEmitter.event;
 
     setActiveDevice(devices?: ErDeviceModel) {
+        this.extension.logChannel.debug(`Setting active device with name ${devices?.host}`);
         this.activeDevice = devices;
         this.changeEmitter.fire();
     }

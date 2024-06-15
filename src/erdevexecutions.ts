@@ -9,6 +9,7 @@ import { ErDevSSHTreeDataProvider, ErDeviceItem } from './erdevproviders';
 import { identityArgs, toHost } from './erdevmodel';
 import { ErDeviceModel } from './api';
 import { execShell } from './vscodeUtils';
+import { ERExtension } from './erextension';
 
 export type Program = string | number; // executable name or pid
 export interface DebugLaunchContext {
@@ -20,11 +21,16 @@ export interface DebugLaunchContext {
 
 export abstract class IErDevExecutions {
     private deploySshScriptPath: string;
-    constructor() {
+    protected erext: ERExtension;
+    get extension(): ERExtension {
+        return this.erext;
+    }
+    constructor(ext: ERExtension) {
         let deploySshScriptUri = vscode.Uri.file(
             path.join(__dirname, '..', 'resources', 'scripts', 'deploy_ssh.sh'),
         );
         this.deploySshScriptPath = deploySshScriptUri.fsPath;
+        this.erext = ext;
     }
 
     public async packProject(
@@ -46,6 +52,7 @@ export abstract class IErDevExecutions {
         return this.buildProject(workspaceFolder)
             .then((exec) =>
                 execShell(
+                    this.erext.logChannel,
                     workspaceFolder,
                     'Pack Project',
                     packScriptUri.fsPath,
@@ -93,7 +100,11 @@ export abstract class IErDevExecutions {
             return Promise.resolve();
         }
         const exe = await this.selectExecutable(workspaceFolder);
-        const activeDevice = await setActiveDeviceIfMissing(provider, device);
+        const activeDevice = await setActiveDeviceIfMissing(
+            this.erext.logChannel,
+            provider,
+            device,
+        );
         if (exe === undefined) {
             vscode.window.showWarningMessage('No launch target selected!');
             return Promise.resolve();
@@ -122,7 +133,7 @@ export abstract class IErDevExecutions {
             });
             return started;
         } catch (error) {
-            console.log(error);
+            this.erext.logChannel.error(`Failed to launch debug target:${error}`);
             this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
             return Promise.reject(error);
         }
@@ -136,13 +147,16 @@ export abstract class IErDevExecutions {
     ): Promise<void> {
         if (workspaceFolder === undefined) {
             showNoWorkspaceWarning();
+            this.erext.logChannel.warn('No workspace found when initiating deploy');
             return Promise.resolve();
         }
         return this.buildProject(workspaceFolder)
-            .then(() => setActiveDeviceIfMissing(provider, target))
+            .then(() => setActiveDeviceIfMissing(this.erext.logChannel, provider, target))
             .then(async (activeTarget) => {
                 const res = await this.execDeploy(activeTarget, workspaceFolder);
-                console.assert(res === 0, 'Deployment failed');
+                if (res !== 0) {
+                    this.erext.logChannel.error('Deployment failed!');
+                }
             });
     }
 
@@ -152,10 +166,11 @@ export abstract class IErDevExecutions {
     ): Promise<number | void> {
         const packScript = this.packScriptName(workspaceFolder);
         if (packScript === undefined) {
-            console.log('Cannot pack if pack script name is not supplied');
+            this.erext.logChannel.error('Cannot pack if pack script name is not supplied');
             return Promise.resolve();
         }
         const [exec, res] = await execShell(
+            this.erext.logChannel,
             workspaceFolder,
             'Deploy Project',
             this.deploySshScriptPath,
@@ -169,6 +184,7 @@ export abstract class IErDevExecutions {
 }
 
 export async function setActiveDeviceIfMissing(
+    log: vscode.LogOutputChannel,
     provider: ErDevSSHTreeDataProvider,
     target?: ErDeviceModel,
 ): Promise<ErDeviceModel> {
@@ -179,6 +195,7 @@ export async function setActiveDeviceIfMissing(
                 .filter((i) => i.label !== undefined)
                 .map((i) => (i as ErDeviceItem).asQuickPickItem()),
         );
+        log.debug(`Active device is not set,candidates ${available}`);
         if (available.length === 1) {
             target = available[0].model;
         } else {
@@ -194,10 +211,19 @@ export async function setActiveDeviceIfMissing(
         }
         provider.model.setActiveDevice(target);
     }
+    log.debug(`Resolved active device name is ${target.host}`);
+
     return target;
 }
 
 export abstract class IERDeviceExecution {
+    protected erext: ERExtension;
+    get extension() {
+        return this.erext;
+    }
+    constructor(ext: ERExtension) {
+        this.erext = ext;
+    }
     public abstract launchTerminal(
         provider: ErDevSSHTreeDataProvider,
         device?: ErDeviceModel,
@@ -205,11 +231,14 @@ export abstract class IERDeviceExecution {
 }
 
 export class SSHDeviceExecution extends IERDeviceExecution {
+    constructor(ext: ERExtension) {
+        super(ext);
+    }
     public async launchTerminal(
         provider: ErDevSSHTreeDataProvider,
         device?: ErDeviceModel,
     ): Promise<vscode.Terminal | void> {
-        return setActiveDeviceIfMissing(provider, device).then((dev) => {
+        return setActiveDeviceIfMissing(this.erext.logChannel, provider, device).then((dev) => {
             const term = vscode.window.createTerminal(`SSH:${dev.host}`, '/bin/bash', [
                 '-c',
                 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' +

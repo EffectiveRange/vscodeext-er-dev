@@ -9,16 +9,17 @@ import { getActiveWorkspace } from './vscodeUtils';
 import { DispatchExecution } from './executiondispatch';
 import { SSHDeviceExecution } from './erdevexecutions';
 import { ErDevApi } from './api';
+import { ERExtension } from './erextension';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): ErDevApi {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
-
-    let model = new ErExtensionModel();
-    let erExec = new DispatchExecution();
-    let deviceExec = new SSHDeviceExecution();
+    let erExt = new ERExtension();
+    let model = new ErExtensionModel(erExt);
+    let erExec = new DispatchExecution(erExt);
+    let deviceExec = new SSHDeviceExecution(erExt);
     let erProvider = new ErDevSSHTreeDataProvider(model);
     const erDevSSHExplorer = vscode.window.createTreeView('er-ssh-explorer', {
         treeDataProvider: erProvider,

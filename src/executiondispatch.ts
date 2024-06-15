@@ -8,8 +8,12 @@ import { existsSync, fstat } from 'fs';
 import { PythonExecution } from './pythonexecution';
 import { CmakeExecutions } from './cmakeexecution';
 import { ErDeviceModel } from './api';
+import { ERExtension } from './erextension';
 
 class NoExecution extends IErDevExecutions {
+    constructor(ext: ERExtension) {
+        super(ext);
+    }
     public async cleanupRemoteDebugger(
         workspaceFolder: WorkspaceFolder,
         device: ErDeviceModel,
@@ -69,11 +73,11 @@ export class DispatchExecution extends IErDevExecutions {
     private cmakeExec: CmakeExecutions;
     private pythonExec: PythonExecution;
     private noExec: NoExecution;
-    constructor() {
-        super();
-        this.cmakeExec = new CmakeExecutions();
-        this.pythonExec = new PythonExecution();
-        this.noExec = new NoExecution();
+    constructor(ext: ERExtension) {
+        super(ext);
+        this.cmakeExec = new CmakeExecutions(ext);
+        this.pythonExec = new PythonExecution(ext);
+        this.noExec = new NoExecution(ext);
     }
     public async debugTargetToRemoteSshLaunchConfig(
         workspaceFolder: WorkspaceFolder,
@@ -102,7 +106,7 @@ export class DispatchExecution extends IErDevExecutions {
         if (existsSync(`${wsp.uri.fsPath}/setup.py`)) {
             return this.pythonExec;
         }
-        console.log(`Unhandled execution type for wsp:${wsp.name}`);
+        this.erext.logChannel.error(`Unhandled execution type for wsp:${wsp.name}`);
         return this.noExec;
     }
 

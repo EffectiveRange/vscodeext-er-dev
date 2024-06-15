@@ -9,8 +9,13 @@ import { showNoCmakeApiWarning } from './erdevexecutions';
 import { showExecQuickPick } from './vscodeUtils';
 import { ErDeviceModel } from './api';
 import { identityArgs, toHost } from './erdevmodel';
+import { ERExtension } from './erextension';
 
 export class CmakeExecutions extends IErDevExecutions {
+    constructor(ext: ERExtension) {
+        super(ext);
+    }
+
     public async cleanupRemoteDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,

@@ -28,7 +28,7 @@ export async function getExtensionHandle(): Promise<vscode.Extension<any>> {
 
     function findExt() {
         return vscode.extensions.all.find((ext, index, exts) => {
-            return ext.id === 'erinc.erdev';
+            return ext.id === 'EffectiveRangeLLC.erdev';
         });
     }
 
