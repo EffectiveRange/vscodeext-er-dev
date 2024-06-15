@@ -1,0 +1,87 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: CI/CD
+
+on:
+    push:
+        branches: main
+        tags: v*.*.*
+
+    pull_request:
+        types:
+            - synchronize
+            - opened
+            - reopened
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.sha }}
+    cancel-in-progress: true
+
+jobs:
+    build-n-publish-vsext:
+        name: Build and publish VSCode extension
+        runs-on: ubuntu-latest
+        outputs:
+            extension_id: ${{ steps.publish.outputs.artifact-id }}
+            extension_url: ${{ steps.publish.outputs.artifact-url }}
+        permissions:
+            contents: read
+        steps:
+            - name: Check out the repo
+              uses: actions/checkout@v4
+            - name: Log in to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME  }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN  }}
+            - name: Build extension
+              id: buildext
+              uses: devcontainers/ci@v0.3
+              with:
+                  subFolder: '${{github.workspace}}'
+                  push: never
+                  runCmd: /workspaces/vscodeext-er-dev/build.sh
+
+            - name: Emit Extension Name
+              id: extname
+              run: echo "extension_path=$(ls -1 ${GITHUB_WORKSPACE}/build/erdev-*.vsix | head -n1)" >> $GITHUB_OUTPUT
+            - name: Publish extension
+              id: publish
+              uses: actions/upload-artifact@v4
+              with:
+                  name: vscode-extension
+                  path: ${{ steps.extname.outputs.extension_path }}
+                  if-no-files-found: error
+
+    create_release:
+        name: Create Release
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            discussions: write
+        needs: [build-n-publish-vsext]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Download artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: vscode-extension
+                  path: ${{ github.workspace }}/vscode-extension
+            - name: Display structure of downloaded files
+              run: |
+                  ls -R ${{ github.workspace }}/vscode-extension
+                  echo "Github ref is: ${{github.ref}}"
+            - name: Release
+              uses: softprops/action-gh-release@v1
+              if: startsWith(github.ref, 'refs/tags/')
+              with:
+                  files: |
+                      ${{ github.workspace }}/vscode-extension/*.vsix
