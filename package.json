@@ -185,7 +185,7 @@
     "configuration": {
       "title": "ER Dev Extension settings",
       "properties": {
-        "er-dev.sshconfig": {
+        "erdev.sshconfig": {
           "type": "string",
           "default": "~/.ssh/config",
           "description": "The path to the ssh config file to use the host definitions from"

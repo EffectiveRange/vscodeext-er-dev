@@ -29,6 +29,7 @@ export class ErDevSSHTreeDataProvider implements vscode.TreeDataProvider<Item> {
     getChildren(element?: ErDeviceItem): Thenable<Item[]> {
         let config = vscode.workspace.getConfiguration('erdev');
         let configfile = (config.get('sshconfig') as string) ?? '~/.ssh/config';
+        this.model.extension.logChannel.info(`Populating SSH configuration from ${configfile}`);
         let parser = new sshparser.SSHParser(configfile);
         if (parser.hasConfig()) {
             return Promise.resolve(

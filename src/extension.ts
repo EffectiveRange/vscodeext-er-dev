@@ -21,6 +21,14 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
     let erExec = new DispatchExecution(erExt);
     let deviceExec = new SSHDeviceExecution(erExt);
     let erProvider = new ErDevSSHTreeDataProvider(model);
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration((event) => {
+            if (event.affectsConfiguration('erdev.sshconfig')) {
+                erProvider.refresh();
+            }
+        }),
+    );
     const erDevSSHExplorer = vscode.window.createTreeView('er-ssh-explorer', {
         treeDataProvider: erProvider,
         canSelectMany: false,
