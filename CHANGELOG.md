@@ -1,3 +1,13 @@
+### 0.2.0 (2024-07-08)
+
+##### New Features
+
+*  Added Quick-Deploy ([6b879b84](https://github.com/EffectiveRange/vscodeext-er-dev/commit/6b879b84049d204b0dae3e0ca43830d7a8cef326))
+
+##### Bug Fixes
+
+*  Fix SSH configuration file path handling + auto update when config changes ([f32fb13f](https://github.com/EffectiveRange/vscodeext-er-dev/commit/f32fb13f6f4991f601160abf380629e7027094cc))
+
 #### 0.1.3 (2024-06-15)
 
 ##### Continuous Integration
