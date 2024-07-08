@@ -62,6 +62,12 @@
         "icon": "$(cloud-upload)"
       },
       {
+        "command": "erdev.deployQuickProject",
+        "title": "Quick-Deploy Project",
+        "category": "ER Dev",
+        "icon": "$(zap)"
+      },
+      {
         "command": "erdev.launchProjectExe",
         "title": "Launch Executable",
         "category": "ER Dev",
@@ -72,6 +78,13 @@
         "title": "Deploy Project",
         "category": "ER Dev",
         "icon": "$(cloud-upload)",
+        "when": "view == er-ssh-explorer"
+      },
+      {
+        "command": "er-ssh-explorer.deployQuickProject",
+        "title": "Quick-Deploy Project",
+        "category": "ER Dev",
+        "icon": "$(zap)",
         "when": "view == er-ssh-explorer"
       },
       {
@@ -127,6 +140,10 @@
           "when": "false"
         },
         {
+          "command": "er-ssh-explorer.deployQuickProject",
+          "when": "false"
+        },
+        {
           "command": "er-ssh-explorer.launchProjectExe",
           "when": "false"
         },
@@ -146,17 +163,22 @@
         {
           "command": "er-ssh-explorer.deployProject",
           "when": "view == er-ssh-explorer && viewItem == erdevice",
-          "group": "inline"
+          "group": "inline@1"
+        },
+        {
+          "command": "er-ssh-explorer.deployQuickProject",
+          "when": "view == er-ssh-explorer && viewItem == erdevice",
+          "group": "inline@2"
         },
         {
           "command": "er-ssh-explorer.launchProjectExe",
           "when": "view == er-ssh-explorer && viewItem == erdevice",
-          "group": "inline"
+          "group": "inline@3"
         },
         {
           "command": "er-ssh-explorer.terminal",
           "when": "view == er-ssh-explorer && viewItem == erdevice",
-          "group": "inline"
+          "group": "inline@4"
         }
       ]
     },
@@ -183,7 +205,7 @@
     "package": "vsce package --yarn --out ./build/",
     "pretest": "yarn run compile-tests && yarn run lint",
     "compile-tests": "yarn run main-out && tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
+    "watch-tests": "yarn run main-out && tsc -p . -w --outDir out",
     "test": "yarn run pretest && node ./out/test/runTest.js",
     "lint": "eslint src --ext ts",
     "coverage": "c8 --all --100 yarn run test",

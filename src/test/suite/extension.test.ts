@@ -29,9 +29,9 @@ suite('Extension Test Suite', () => {
         const tabs: vscode.Tab[] = vscode.window.tabGroups.all.map((tg) => tg.tabs).flat();
         await vscode.window.tabGroups.close(tabs);
     });
-    suiteTeardown(async () => {});
+    suiteTeardown(async () => { });
 
-    teardown(async function (this: Mocha.Context) {});
+    teardown(async function (this: Mocha.Context) { });
 
     test('pack cmake project proj1', async () => {
         const wsp = getWorkspace('proj1');
@@ -77,6 +77,29 @@ suite('Extension Test Suite', () => {
         assert.strictEqual(existsSync('/usr/bin/proj1'), false);
         assert.strictEqual(existsSync('/usr/bin/proj1_2'), false);
         await vscode.commands.executeCommand('erdev.deployProject');
+        assert.strictEqual(
+            existsSync(path.join(`${wsp.uri.fsPath}`, 'build', 'proj1_1.0.0_amd64.deb')),
+            true,
+        );
+        assert.strictEqual(existsSync('/usr/bin/proj1'), true);
+        assert.strictEqual(existsSync('/usr/bin/proj1_2'), true);
+    }).timeout(100000);
+
+    test('deploy quick cmake project proj1 with ssh key', async () => {
+        const wsp = getWorkspace('proj1');
+        assert.notStrictEqual(wsp, undefined);
+        await openWorkspaceFile(wsp, 'main.cpp');
+        await vscode.commands.executeCommand('cmake.setKitByName', '__scanforkits__', wsp);
+        await vscode.commands.executeCommand('cmake.setVariant', wsp, 'Debug');
+        const handle = await getExtensionHandle();
+        const api = handle.exports as ErDevApi;
+        api.setActiveDevice({
+            id: 'test', host: 'test', hostname: 'localhost', user: 'node',
+            identity: '/home/node/.ssh/id_rsa'
+        });
+        assert.strictEqual(existsSync('/usr/bin/proj1'), false);
+        assert.strictEqual(existsSync('/usr/bin/proj1_2'), false);
+        await vscode.commands.executeCommand('erdev.deployQuickProject');
         assert.strictEqual(
             existsSync(path.join(`${wsp.uri.fsPath}`, 'build', 'proj1_1.0.0_amd64.deb')),
             true,

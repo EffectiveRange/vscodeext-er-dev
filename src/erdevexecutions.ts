@@ -144,6 +144,7 @@ export abstract class IErDevExecutions {
         provider: ErDevSSHTreeDataProvider,
         target?: ErDeviceModel,
         workspaceFolder?: vscode.WorkspaceFolder,
+        quick: boolean = false,
     ): Promise<void> {
         if (workspaceFolder === undefined) {
             showNoWorkspaceWarning();
@@ -153,7 +154,7 @@ export abstract class IErDevExecutions {
         return this.buildProject(workspaceFolder)
             .then(() => setActiveDeviceIfMissing(this.erext.logChannel, provider, target))
             .then(async (activeTarget) => {
-                const res = await this.execDeploy(activeTarget, workspaceFolder);
+                const res = await this.execDeploy(activeTarget, workspaceFolder, quick);
                 if (res !== 0) {
                     this.erext.logChannel.error('Deployment failed!');
                 }
@@ -163,6 +164,7 @@ export abstract class IErDevExecutions {
     private async execDeploy(
         target: ErDeviceModel,
         workspaceFolder: vscode.WorkspaceFolder,
+        quick: boolean = false,
     ): Promise<number | void> {
         const packScript = this.packScriptName(workspaceFolder);
         if (packScript === undefined) {
@@ -176,6 +178,7 @@ export abstract class IErDevExecutions {
             this.deploySshScriptPath,
             packScript,
             workspaceFolder.uri.fsPath,
+            quick ? 'quick' : 'all',
             toHost(target),
             ...identityArgs(target),
         );

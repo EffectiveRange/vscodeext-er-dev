@@ -16,7 +16,7 @@
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
 			],
-			"preLaunchTask": "${defaultBuildTask}",
+			"preLaunchTask": "pretest",
 			"postDebugTask": "posttest"
 		},
 		{
@@ -24,7 +24,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}", 
+				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index",
 				"-n",
 				"--file-uri=${workspaceFolder}/testwsp/test.code-workspace",
@@ -36,6 +36,5 @@
 			"preLaunchTask": "pretest",
 			"postDebugTask": "posttest"
 		},
-
 	]
 }
