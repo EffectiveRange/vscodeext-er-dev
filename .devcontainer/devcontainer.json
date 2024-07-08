@@ -6,6 +6,10 @@
 	"image": "effectiverange/devc-erdev-vscodeext:latest",
 	"customizations": {
 		"vscode": {
+			"settings": {
+				// Workaround for https://github.com/microsoft/vscode-remote-release/issues/10036
+				"extensions.verifySignature": false
+			},
 			"extensions": [
 				"ms-vscode.extension-test-runner",
 				"ms-vscode.cmake-tools",

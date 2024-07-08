@@ -21,6 +21,14 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
     let erExec = new DispatchExecution(erExt);
     let deviceExec = new SSHDeviceExecution(erExt);
     let erProvider = new ErDevSSHTreeDataProvider(model);
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration((event) => {
+            if (event.affectsConfiguration('erdev.sshconfig')) {
+                erProvider.refresh();
+            }
+        }),
+    );
     const erDevSSHExplorer = vscode.window.createTreeView('er-ssh-explorer', {
         treeDataProvider: erProvider,
         canSelectMany: false,
@@ -40,6 +48,13 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
     context.subscriptions.push(
         vscode.commands.registerCommand('er-ssh-explorer.deployProject', (device: ErDeviceItem) =>
             erExec.deployProject(erProvider, device.model, getActiveWorkspace()),
+        ),
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            'er-ssh-explorer.deployQuickProject',
+            (device: ErDeviceItem) =>
+                erExec.deployProject(erProvider, device.model, getActiveWorkspace(), true),
         ),
     );
 
@@ -67,9 +82,12 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
 
     // status bar item for packaging
     createErStatusSeparator(context, model, erExec);
+
     createPackStatusBarItem(context, model, erExec);
 
     createDeployStatusBarItem(context, erProvider, erExec);
+
+    createDeployStatusBarItem(context, erProvider, erExec, true);
 
     createLaunchStatusBarItem(context, erProvider, erExec);
     // TODO items:
@@ -120,20 +138,26 @@ function createDeployStatusBarItem(
     context: vscode.ExtensionContext,
     provider: ErDevSSHTreeDataProvider,
     erExec: DispatchExecution,
+    quick: boolean = false,
 ) {
     let erStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 99);
-    erStatusBar.command = 'erdev.deployProject';
-    setDeployStatusText(provider.model, erStatusBar);
+    const deployCmd = quick ? 'erdev.deployQuickProject' : 'erdev.deployProject';
+    erStatusBar.command = deployCmd;
+    const deployStatusFunc = quick ? setQuickDeployStatusText : setDeployStatusText;
+    deployStatusFunc(provider.model, erStatusBar);
     context.subscriptions.push(erStatusBar);
     context.subscriptions.push(
-        vscode.commands.registerCommand('erdev.deployProject', () =>
-            erExec.deployProject(provider, provider.model.getActiveDevice(), getActiveWorkspace()),
+        vscode.commands.registerCommand(deployCmd, () =>
+            erExec.deployProject(
+                provider,
+                provider.model.getActiveDevice(),
+                getActiveWorkspace(),
+                quick,
+            ),
         ),
     );
     context.subscriptions.push(
-        provider.model.onChangeActiveDevices(() =>
-            setDeployStatusText(provider.model, erStatusBar),
-        ),
+        provider.model.onChangeActiveDevices(() => deployStatusFunc(provider.model, erStatusBar)),
     );
 
     erStatusBar.show();
@@ -168,9 +192,14 @@ function setPackStatusText(erStatusBar: vscode.StatusBarItem) {
 
 function setDeployStatusText(model: ErExtensionModel, erStatusBar: vscode.StatusBarItem) {
     erStatusBar.text = '$(cloud-upload) Deploy';
-    erStatusBar.tooltip = `Deploy current project package to device(s)[${
-        model.getActiveDeviceName() ?? 'None'
-    }]`;
+    erStatusBar.tooltip = `Deploy current project package to device(s)\
+    [${model.getActiveDeviceName() ?? 'None'}]`;
+}
+
+function setQuickDeployStatusText(model: ErExtensionModel, erStatusBar: vscode.StatusBarItem) {
+    erStatusBar.text = '$(zap) Quick-Deploy';
+    erStatusBar.tooltip = `Quick-Deploy (no dependency install) current project package to \
+    device(s)[${model.getActiveDeviceName() ?? 'None'}]`;
 }
 
 function setLaunchStatusText(model: ErExtensionModel, erStatusBar: vscode.StatusBarItem) {
