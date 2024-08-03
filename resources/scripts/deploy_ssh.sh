@@ -12,7 +12,8 @@ if [ -z $2 ] || { [ $3 != "quick" ] && [ $3 != "all" ]; }; then
 fi
 
 
-PACK_SCRIPT="$SCRIPT_DIR/pack_$1.sh"
+PACK_SCRIPT="$SCRIPT_DIR/pack.sh"
+PROJTYPE=$1
 WSPDIR=$2
 TYPE=$3
 TARGET=$4
@@ -34,7 +35,7 @@ fi
 
 shift 4
 
-DEB_FILES_LIST="$("$PACK_SCRIPT" "$WSPDIR")"
+DEB_FILES_LIST=$("$PACK_SCRIPT" $PROJTYPE "$WSPDIR")
 
 for file in "$DEB_FILES_LIST"
 do

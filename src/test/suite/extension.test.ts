@@ -29,9 +29,9 @@ suite('Extension Test Suite', () => {
         const tabs: vscode.Tab[] = vscode.window.tabGroups.all.map((tg) => tg.tabs).flat();
         await vscode.window.tabGroups.close(tabs);
     });
-    suiteTeardown(async () => { });
+    suiteTeardown(async () => {});
 
-    teardown(async function (this: Mocha.Context) { });
+    teardown(async function (this: Mocha.Context) {});
 
     test('pack cmake project proj1', async () => {
         const wsp = getWorkspace('proj1');
@@ -62,7 +62,10 @@ suite('Extension Test Suite', () => {
         assert.notStrictEqual(wsp2, undefined);
         await openWorkspaceFile(wsp2, 'bin', 'pyproj');
         await vscode.commands.executeCommand('erdev.packProject');
-        assert.strictEqual(existsSync('/tmp/fpm/python3-pyproj_1.0.0_all.deb'), true);
+        assert.strictEqual(
+            existsSync(`${wsp2.uri.fsPath}/dist/python3-pyproj_1.0.0_all.deb`),
+            true,
+        );
     }).timeout(100000);
 
     test('deploy cmake project proj1', async () => {
@@ -94,8 +97,11 @@ suite('Extension Test Suite', () => {
         const handle = await getExtensionHandle();
         const api = handle.exports as ErDevApi;
         api.setActiveDevice({
-            id: 'test', host: 'test', hostname: 'localhost', user: 'node',
-            identity: '/home/node/.ssh/id_rsa'
+            id: 'test',
+            host: 'test',
+            hostname: 'localhost',
+            user: 'node',
+            identity: '/home/node/.ssh/id_rsa',
         });
         assert.strictEqual(existsSync('/usr/bin/proj1'), false);
         assert.strictEqual(existsSync('/usr/bin/proj1_2'), false);
@@ -135,7 +141,7 @@ suite('Extension Test Suite', () => {
         api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
         assert.strictEqual(existsSync('/usr/local/bin/pyproj'), false);
         await vscode.commands.executeCommand('erdev.deployProject');
-        assert.strictEqual(existsSync('/tmp/fpm/python3-pyproj_1.0.0_all.deb'), true);
+        assert.strictEqual(existsSync(`${wsp.uri.fsPath}/dist/python3-pyproj_1.0.0_all.deb`), true);
         assert.strictEqual(existsSync('/usr/local/bin/pyproj'), true);
     }).timeout(100000);
 

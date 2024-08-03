@@ -210,7 +210,7 @@ export class PythonExecution extends IErDevExecutions {
         return Promise.resolve();
     }
 
-    public packScriptName(workspaceFolder?: vscode.WorkspaceFolder | undefined): string {
+    public packScriptName(): string {
         return 'python';
     }
 }
