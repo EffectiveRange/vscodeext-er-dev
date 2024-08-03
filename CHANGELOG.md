@@ -1,3 +1,9 @@
+### 0.3.0 (2024-08-03)
+
+##### New Features
+
+*  integrate packaging-tools repository ([2cf88f65](https://github.com/EffectiveRange/vscodeext-er-dev/commit/2cf88f656e75ffb352fab761d380e474efa953f5))
+
 ### 0.2.0 (2024-07-08)
 
 ##### New Features
