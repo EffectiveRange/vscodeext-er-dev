@@ -20,7 +20,7 @@ export class CmakeExecutions extends IErDevExecutions {
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
-    ): Promise<void> {}
+    ): Promise<void> { }
 
     public async setupRemoteDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
@@ -30,7 +30,7 @@ export class CmakeExecutions extends IErDevExecutions {
         return context;
     }
 
-    public packScriptName(): string {
+    public packScriptName(workspaceFolder?: vscode.WorkspaceFolder): string {
         return 'cmake';
     }
 

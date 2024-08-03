@@ -20,6 +20,14 @@ For further development workflow and other details please see the [wiki](https:/
 
 The extension was targeted be used inside an Effective Range dev container for proper operation, but since only vanilla Debian based tooling used, it can be used for any supported project types for remote deployment and debugging.
 
+If your project uses the [Effective Range devcontainer definitions](https://github.com/EffectiveRange/devcontainer-defs) then all the prerequisites are installed there when you open your project with one of the devcontainers. Otherwise the following tools have to be installed on your machine:
+
+-   python3 interpreter with pip
+-   cmake
+-   [fpm](https://fpm.readthedocs.io/en/latest/), if you have a python project and opt for the fpm based packaging
+-   [stdeb](https://pypi.org/project/stdeb/), if you have a python project and opt for the dhvirtualenv based packaging
+-   ssh client for remote deployment and debugging
+
 ## Features
 
 This extension has the following features:
@@ -34,8 +42,11 @@ This extension has the following features:
 ![ER Dev explorer](images/explorer.png)
 
 -   ER Pack:
+    -   The packaging relies on the [Effective Range packaging project](https://github.com/EffectiveRange/packaging-tools) for uniform packaging
+        -   The cmake packaging is driven by the project's CPack settings, and currently it must produce a debian package as an output
+        -   The python packaging is driven by the project's `setup.cfg` file, all the details are available in the [packaging project documentation](https://github.com/EffectiveRange/packaging-tools/blob/main/python/README.md) documentation
     -   This command can be used to pack the active project
-    -   The command invoked from the command palette
+    -   The command can be invoked from the command palette
     -   The command can be invoked from the status bar button
 -   ER Deploy:
     -   This command deploys the active project to the selected devices
@@ -65,6 +76,7 @@ This extension contributes the following settings:
 
 The following features will be added in the feature
 
+-   dynamically detect the remote machine interpreter path if dhvirtualenv based packaging is in place
 -   Remote debugger attach for the selected host with process pick, etc for python and C++ debugging
 -   Support serial connection targets to utilize the UART capabilities of the MrHAT
 -   Support for ansible dynamic/static inventory targets

@@ -46,7 +46,7 @@ export abstract class IErDevExecutions {
                 '..',
                 'resources',
                 'scripts',
-                `pack_${this.packScriptName(workspaceFolder)}.sh`,
+                'pack.sh',
             ),
         );
         return this.buildProject(workspaceFolder)
@@ -56,6 +56,7 @@ export abstract class IErDevExecutions {
                     workspaceFolder,
                     'Pack Project',
                     packScriptUri.fsPath,
+                    this.packScriptName(workspaceFolder) as string,
                     workspaceFolder.uri.fsPath,
                 ),
             )
@@ -245,7 +246,7 @@ export class SSHDeviceExecution extends IERDeviceExecution {
             const term = vscode.window.createTerminal(`SSH:${dev.host}`, '/bin/bash', [
                 '-c',
                 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' +
-                    ` -q ${identityArgs(dev).join(' ')} ${toHost(dev)}`,
+                ` -q ${identityArgs(dev).join(' ')} ${toHost(dev)}`,
             ]);
             term.show();
             return term;

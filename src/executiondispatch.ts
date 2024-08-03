@@ -18,7 +18,7 @@ class NoExecution extends IErDevExecutions {
         workspaceFolder: WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
-    ): Promise<void> {}
+    ): Promise<void> { }
 
     public async setupRemoteDebugger(
         workspaceFolder: WorkspaceFolder,
@@ -42,7 +42,7 @@ class NoExecution extends IErDevExecutions {
     ): Promise<void | TaskExecution> {
         return Promise.resolve();
     }
-    public packScriptName(): string {
+    public packScriptName(workspaceFolder?: WorkspaceFolder): string {
         throw new Error('Cannot deploy.');
     }
 }

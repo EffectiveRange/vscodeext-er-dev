@@ -1,0 +1,3 @@
+[submodule "resources/packaging-tools"]
+	path = resources/scripts/packaging-tools
+	url = https://github.com/EffectiveRange/packaging-tools.git
