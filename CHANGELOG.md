@@ -1,3 +1,9 @@
+#### 0.3.1 (2024-08-03)
+
+##### Chores
+
+*  removed old pack scripts ([2ac026b2](https://github.com/EffectiveRange/vscodeext-er-dev/commit/2ac026b211f758ec4368ded9b14841e92f2e3266))
+
 ### 0.3.0 (2024-08-03)
 
 ##### New Features
