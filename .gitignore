@@ -130,3 +130,10 @@ dist
 .pnp.*
 
 build/**
+
+**/scripts/common.py
+**/scripts/dh-virtualenv
+**/scripts/fpm-deb
+**/scripts/pack_cmake
+**/scripts/pack_python
+**/scripts/wheel

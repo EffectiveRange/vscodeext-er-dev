@@ -199,7 +199,7 @@ export class PythonExecution extends IErDevExecutions {
     constructor(ext: ERExtension) {
         super(ext);
         let packScriptUri = vscode.Uri.file(
-            path.join(__dirname, '..', 'resources', 'scripts', 'pack_python.sh'),
+            path.join(__dirname, '..', 'resources', 'scripts', 'pack_python'),
         );
         this.packCmd = packScriptUri.fsPath;
     }

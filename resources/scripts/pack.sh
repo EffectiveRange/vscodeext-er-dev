@@ -16,4 +16,4 @@ if [ -z $TYPE ]; then
 fi
 
 
-$SCRIPT_DIR/packaging-tools/$TYPE/pack_$TYPE "$@"
+$SCRIPT_DIR/pack_$TYPE "$@"
