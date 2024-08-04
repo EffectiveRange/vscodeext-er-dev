@@ -10,7 +10,6 @@ ROOTDIR=$(dirname $0)
 
 rm -rf $ROOTDIR/build
 
-yarn install
 if [ -z $DISPLAY ]; then
   echo "DISPLAY is not set. Running in headless mode."
   xvfb-run -a -- yarn run test 

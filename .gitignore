@@ -137,3 +137,5 @@ build/**
 **/scripts/pack_cmake
 **/scripts/pack_python
 **/scripts/wheel
+resources/scripts/packaging-tools.tar.gz
+**/__pycache__
