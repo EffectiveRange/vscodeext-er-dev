@@ -1,3 +1,9 @@
+#### 0.4.1 (2024-08-04)
+
+##### Bug Fixes
+
+*  packaging ([061a0b09](https://github.com/EffectiveRange/vscodeext-er-dev/commit/061a0b096f0a6ae6276dbd23fd85022600eda20e))
+
 ### 0.4.0 (2024-08-04)
 
 ##### Bug Fixes
