@@ -1,3 +1,9 @@
+### 0.4.0 (2024-08-04)
+
+##### Bug Fixes
+
+*  update packaging tools to fix extension installation problems ([d62db1cc](https://github.com/EffectiveRange/vscodeext-er-dev/commit/d62db1cc175aab5c8006d7a67d4d5f32ec7c3b9a))
+
 #### 0.3.1 (2024-08-03)
 
 ##### Chores
