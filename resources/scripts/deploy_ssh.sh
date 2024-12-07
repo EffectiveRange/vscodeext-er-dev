@@ -52,7 +52,7 @@ rsync -avzc --progress -e "$SSHARGS" $(echo $DEB_FILES_LIST | tr '\n' ' ') "$TAR
 if [ $TYPE == "quick" ]; then
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo dpkg -i $DEB_FILES_NAMES"
 elif [ $TYPE == "all" ]; then
-    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo apt install -y --reinstall --no-install-recommends $DEB_FILES_NAMES" 
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo apt install -y --allow-downgrades --reinstall --no-install-recommends $DEB_FILES_NAMES" 
 else
     echo "Deployment type $TYPE unknown!"
     exit 1
