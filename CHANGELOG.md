@@ -1,3 +1,9 @@
+#### 0.4.5 (2024-12-07)
+
+##### Bug Fixes
+
+*  pass allow-downgrades flag to apt install in deploy script ([87301668](https://github.com/EffectiveRange/vscodeext-er-dev/commit/87301668354d8afa3ade1249e1a93f4a211e0744))
+
 #### 0.4.4 (2024-08-05)
 
 #### 0.4.3 (2024-08-05)
