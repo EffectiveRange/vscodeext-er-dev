@@ -1,0 +1,14 @@
+{
+
+    "configurations": [
+    {
+      "name": "C++ Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${command:erdev.pickProgram}",
+      "args": ["arg1", "arg2"],
+      "environment": [{ "name": "config", "value": "Debug" }],
+      "cwd": "${workspaceFolder}",
+    }
+    ]
+  }

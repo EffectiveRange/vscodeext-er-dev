@@ -24,7 +24,13 @@ export function getActiveWorkspace(): vscode.WorkspaceFolder | undefined {
     }
     return vscode.workspace.workspaceFolders?.[0];
 }
-export async function showExecQuickPick(items: string[]): Promise<string | undefined> {
+
+export interface Executable {
+    label: string;
+    description: string;
+}
+
+export async function showExecQuickPick(items: Executable[]): Promise<Executable | undefined> {
     return vscode.window.showQuickPick(items, {
         title: 'ER Dev Launch Selector',
         placeHolder: 'Select executable to launch',

@@ -2,15 +2,19 @@
 // SPDX-FileCopyrightText: 2024 Attila Gombos <attila.gombos@effective-range.com>
 // SPDX-License-Identifier: MIT
 
-import { WorkspaceFolder, TaskExecution, DebugConfiguration } from 'vscode';
+import { WorkspaceFolder, TaskExecution, DebugConfiguration, window } from 'vscode';
 import { DebugLaunchContext, IErDevExecutions } from './erdevexecutions';
 import { existsSync, fstat } from 'fs';
 import { PythonExecution } from './pythonexecution';
 import { CmakeExecutions } from './cmakeexecution';
 import { ErDeviceModel } from './api';
 import { ERExtension } from './erextension';
+import { Executable } from './vscodeUtils';
 
 class NoExecution extends IErDevExecutions {
+    public getPrograms(workspaceFolder: WorkspaceFolder): Promise<string[]> {
+        return Promise.resolve([]);
+    }
     constructor(ext: ERExtension) {
         super(ext);
     }
@@ -18,7 +22,7 @@ class NoExecution extends IErDevExecutions {
         workspaceFolder: WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
-    ): Promise<void> { }
+    ): Promise<void> {}
 
     public async setupRemoteDebugger(
         workspaceFolder: WorkspaceFolder,
@@ -34,7 +38,10 @@ class NoExecution extends IErDevExecutions {
     ): Promise<DebugConfiguration> {
         return Promise.reject('Method not implemented.');
     }
-    public selectExecutable(workspaceFolder: WorkspaceFolder): Promise<string | undefined> {
+    public selectExecutable(
+        workspaceFolder: WorkspaceFolder,
+        fullPath?: boolean,
+    ): Promise<Executable | undefined> {
         return Promise.reject('Method not implemented.');
     }
     public buildProject(
@@ -48,6 +55,9 @@ class NoExecution extends IErDevExecutions {
 }
 
 export class DispatchExecution extends IErDevExecutions {
+    public getPrograms(workspaceFolder: WorkspaceFolder): Promise<string[]> {
+        return this.getActiveExecution(workspaceFolder).getPrograms(workspaceFolder);
+    }
     public cleanupRemoteDebugger(
         workspaceFolder: WorkspaceFolder,
         device: ErDeviceModel,
@@ -59,6 +69,16 @@ export class DispatchExecution extends IErDevExecutions {
             context,
         );
     }
+
+    public pickProgram(workspaceFolder?: WorkspaceFolder): Promise<string | undefined> {
+        if (workspaceFolder === undefined) {
+            return Promise.resolve(undefined);
+        }
+        return this.getActiveExecution(workspaceFolder)
+            .selectExecutable(workspaceFolder, true)
+            .then((e) => e?.description);
+    }
+
     public setupRemoteDebugger(
         workspaceFolder: WorkspaceFolder,
         device: ErDeviceModel,
@@ -91,8 +111,11 @@ export class DispatchExecution extends IErDevExecutions {
         );
     }
 
-    public selectExecutable(workspaceFolder: WorkspaceFolder): Promise<string | undefined> {
-        return this.getActiveExecution(workspaceFolder).selectExecutable(workspaceFolder);
+    public selectExecutable(
+        workspaceFolder: WorkspaceFolder,
+        fullPath?: boolean,
+    ): Promise<Executable | undefined> {
+        return this.getActiveExecution(workspaceFolder).selectExecutable(workspaceFolder, fullPath);
     }
 
     private getActiveExecution(wsp?: WorkspaceFolder): IErDevExecutions {

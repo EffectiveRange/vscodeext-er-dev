@@ -6,13 +6,23 @@ import * as vscode from 'vscode';
 import { DebugLaunchContext, IErDevExecutions } from './erdevexecutions';
 import path from 'path';
 import { existsSync } from 'fs';
-import { execShellWithOutput, scpExec, showExecQuickPick, sshExec, sshTask } from './vscodeUtils';
+import {
+    execShellWithOutput,
+    Executable,
+    scpExec,
+    showExecQuickPick,
+    sshExec,
+    sshTask,
+} from './vscodeUtils';
 import { ErDeviceModel } from './api';
 import { getRandomPort } from './utils';
 import { v4 as uuidv4 } from 'uuid';
 import { ERExtension } from './erextension';
 
 export class PythonExecution extends IErDevExecutions {
+    public getPrograms(workspaceFolder: vscode.WorkspaceFolder): Promise<string[]> {
+        throw new Error('Method not implemented.');
+    }
     public async cleanupRemoteDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,
@@ -176,7 +186,8 @@ export class PythonExecution extends IErDevExecutions {
     }
     public async selectExecutable(
         workspaceFolder: vscode.WorkspaceFolder,
-    ): Promise<string | undefined> {
+        fullPath?: boolean,
+    ): Promise<Executable | undefined> {
         const bindir = [workspaceFolder.uri.fsPath, 'bin'].join(path.sep);
         if (!existsSync(bindir)) {
             return Promise.resolve(undefined);
@@ -189,9 +200,19 @@ export class PythonExecution extends IErDevExecutions {
             return Promise.resolve(undefined);
         }
         if (targets.length === 1) {
-            return Promise.resolve(targets[0][0]);
+            return Promise.resolve({
+                label: targets[0][0],
+                description: `${bindir}/${targets[0][0]}`,
+            });
         }
-        return showExecQuickPick(targets.map((t) => t[0]));
+        return showExecQuickPick(
+            targets.map((t) => {
+                return {
+                    label: t[0][0],
+                    description: `${bindir}/${t[0][0]}`,
+                };
+            }),
+        );
     }
 
     private packCmd: string;

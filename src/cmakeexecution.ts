@@ -6,12 +6,15 @@ import * as vscode from 'vscode';
 import * as cmake from 'vscode-cmake-tools';
 import { DebugLaunchContext, IErDevExecutions } from './erdevexecutions';
 import { showNoCmakeApiWarning } from './erdevexecutions';
-import { showExecQuickPick } from './vscodeUtils';
+import { Executable, showExecQuickPick } from './vscodeUtils';
 import { ErDeviceModel } from './api';
 import { identityArgs, toHost } from './erdevmodel';
 import { ERExtension } from './erextension';
 
 export class CmakeExecutions extends IErDevExecutions {
+    public getPrograms(workspaceFolder: vscode.WorkspaceFolder): Promise<string[]> {
+        throw new Error('Method not implemented.');
+    }
     constructor(ext: ERExtension) {
         super(ext);
     }
@@ -20,7 +23,7 @@ export class CmakeExecutions extends IErDevExecutions {
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
-    ): Promise<void> { }
+    ): Promise<void> {}
 
     public async setupRemoteDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
@@ -48,7 +51,8 @@ export class CmakeExecutions extends IErDevExecutions {
 
     public async selectExecutable(
         workspaceFolder: vscode.WorkspaceFolder,
-    ): Promise<string | undefined> {
+        fullPath?: boolean,
+    ): Promise<Executable | undefined> {
         return withCmake((api) =>
             api
                 .getProject(workspaceFolder.uri)
@@ -57,9 +61,19 @@ export class CmakeExecutions extends IErDevExecutions {
                     const dbgTargets = cmakeProjectToDebugTargets(pv[0]);
 
                     if (dbgTargets?.length === 1) {
-                        return dbgTargets[0].target.fullName;
+                        return Promise.resolve({
+                            label: dbgTargets[0].target.fullName ?? dbgTargets[0].target.name,
+                            description:
+                                dbgTargets[0].target.artifacts?.[0] ?? dbgTargets[0].target.name,
+                        });
                     }
-                    const items = dbgTargets?.map((t) => t.target.fullName ?? t.target.name) ?? [];
+                    const items =
+                        dbgTargets?.map((t) => {
+                            return {
+                                label: t.target.fullName ?? t.target.name,
+                                description: t.target.artifacts?.[0] ?? t.target.name,
+                            };
+                        }) ?? [];
                     if (items.length === 0) {
                         return Promise.resolve(undefined);
                     }

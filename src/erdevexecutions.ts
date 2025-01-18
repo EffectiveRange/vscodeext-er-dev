@@ -8,7 +8,7 @@ import * as path from 'path';
 import { ErDevSSHTreeDataProvider, ErDeviceItem } from './erdevproviders';
 import { identityArgs, toHost } from './erdevmodel';
 import { ErDeviceModel } from './api';
-import { execShell } from './vscodeUtils';
+import { execShell, Executable } from './vscodeUtils';
 import { ERExtension } from './erextension';
 
 export type Program = string | number; // executable name or pid
@@ -33,6 +33,8 @@ export abstract class IErDevExecutions {
         this.erext = ext;
     }
 
+    public abstract getPrograms(workspaceFolder: vscode.WorkspaceFolder): Promise<string[]>;
+
     public async packProject(
         workspaceFolder?: vscode.WorkspaceFolder,
     ): Promise<number | undefined | void> {
@@ -41,13 +43,7 @@ export abstract class IErDevExecutions {
             return;
         }
         let packScriptUri = vscode.Uri.file(
-            path.join(
-                __dirname,
-                '..',
-                'resources',
-                'scripts',
-                'pack.sh',
-            ),
+            path.join(__dirname, '..', 'resources', 'scripts', 'pack.sh'),
         );
         return this.buildProject(workspaceFolder)
             .then((exec) =>
@@ -77,7 +73,8 @@ export abstract class IErDevExecutions {
 
     public abstract selectExecutable(
         workspaceFolder: vscode.WorkspaceFolder,
-    ): Promise<string | undefined>;
+        fullPath?: boolean,
+    ): Promise<Executable | undefined>;
 
     public abstract setupRemoteDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
@@ -100,7 +97,7 @@ export abstract class IErDevExecutions {
             showNoWorkspaceWarning();
             return Promise.resolve();
         }
-        const exe = await this.selectExecutable(workspaceFolder);
+        const exe = await this.selectExecutable(workspaceFolder, false);
         const activeDevice = await setActiveDeviceIfMissing(
             this.erext.logChannel,
             provider,
@@ -110,7 +107,9 @@ export abstract class IErDevExecutions {
             vscode.window.showWarningMessage('No launch target selected!');
             return Promise.resolve();
         }
-        let exec = await this.setupRemoteDebugger(workspaceFolder, activeDevice, { program: exe });
+        let exec = await this.setupRemoteDebugger(workspaceFolder, activeDevice, {
+            program: exe.label,
+        });
         try {
             const dbgConfig = await this.debugTargetToRemoteSshLaunchConfig(
                 workspaceFolder,
@@ -246,7 +245,7 @@ export class SSHDeviceExecution extends IERDeviceExecution {
             const term = vscode.window.createTerminal(`SSH:${dev.host}`, '/bin/bash', [
                 '-c',
                 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' +
-                ` -q ${identityArgs(dev).join(' ')} ${toHost(dev)}`,
+                    ` -q ${identityArgs(dev).join(' ')} ${toHost(dev)}`,
             ]);
             term.show();
             return term;

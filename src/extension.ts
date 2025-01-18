@@ -77,7 +77,11 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
             deviceExec.launchTerminal(erProvider),
         ),
     );
-
+    context.subscriptions.push(
+        vscode.commands.registerCommand('erdev.pickProgram', () =>
+            erExec.pickProgram(getActiveWorkspace()),
+        ),
+    );
     context.subscriptions.push(erDevSSHExplorer);
 
     // status bar item for packaging

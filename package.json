@@ -106,6 +106,12 @@
         "title": "Open terminal",
         "category": "ER Dev",
         "icon": "$(terminal)"
+      },
+      {
+        "command": "erdev.pickProgram",
+        "title": "Pick Program executable for debug launch",
+        "category": "ER Dev",
+        "icon": "$(file-binary)"
       }
     ],
     "viewsContainers": {
