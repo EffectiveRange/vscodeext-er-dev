@@ -4,4 +4,8 @@
 			"path": "."
 		}
 	]
+	,
+	"settings": {
+		"editor.formatOnSave": true
+	}
 }
