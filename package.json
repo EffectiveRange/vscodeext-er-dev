@@ -252,7 +252,7 @@
     "glob": "^10.3.10",
     "shescape": "^2.1.0",
     "ssh-config": "^4.4.1",
-    "uuid": "^9.0.1",
+    "uuid": "^11.0.5",
     "vscode-cmake-tools": "^1.1.0"
   },
   "extensionDependencies": [
