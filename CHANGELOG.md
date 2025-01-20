@@ -1,3 +1,38 @@
+### 0.5.0 (2025-01-20)
+
+##### Chores
+
+*  updated readme ([2ec28aa1](https://github.com/EffectiveRange/vscodeext-er-dev/commit/2ec28aa13e584d600437e486d84850644d0cb9f6))
+* **deps-dev:**
+  *  bump prettier from 3.2.5 to 3.4.2 ([0516911a](https://github.com/EffectiveRange/vscodeext-er-dev/commit/0516911a989fa55d9ef22a141bb9261e8a216e2f))
+  *  bump webpack from 5.90.3 to 5.97.1 ([1abbd92a](https://github.com/EffectiveRange/vscodeext-er-dev/commit/1abbd92a14002b4027902b1f15e451bc46074485))
+  *  bump @vscode/test-electron from 2.3.9 to 2.4.1 ([870d55de](https://github.com/EffectiveRange/vscodeext-er-dev/commit/870d55de4f5720b056e73455edba21f46a2ab3e7))
+* **deps:**
+  *  bump uuid from 9.0.1 to 11.0.5 ([96d983eb](https://github.com/EffectiveRange/vscodeext-er-dev/commit/96d983ebc9c0d7b8b5d39c5880ead3465ee92648))
+  *  bump softprops/action-gh-release from 1 to 2 ([b913cda8](https://github.com/EffectiveRange/vscodeext-er-dev/commit/b913cda83aa4f2d37a02a529516dddb33bad409c))
+
+##### New Features
+
+*  enhance argument handling in executables and add argument selection UI ([b6db7666](https://github.com/EffectiveRange/vscodeext-er-dev/commit/b6db7666f521950088691213b0d738686eb4312c))
+*  wheel deplopy and debugger attach on remote ([54c676fe](https://github.com/EffectiveRange/vscodeext-er-dev/commit/54c676fe107148c3331dad3c17f0b8e922c29a16))
+*  add sshExecWithOutput function for executing remote commands with output logging ([5c5e05e8](https://github.com/EffectiveRange/vscodeext-er-dev/commit/5c5e05e8894b31088013477426082a089996b59b))
+*  enhance deploy script to support Python package installation from wheel files ([78cac032](https://github.com/EffectiveRange/vscodeext-er-dev/commit/78cac032d7e3a5e17c413bc9f87da9532655d731))
+*  add remote attach command stubs and debug configuration for remote processes ([2412e415](https://github.com/EffectiveRange/vscodeext-er-dev/commit/2412e415812218a80bd166632e93e8aa2b356295))
+*  remove Docker Hub login step from release workflow ([12709dd2](https://github.com/EffectiveRange/vscodeext-er-dev/commit/12709dd263876d4acbfc25bf06829780e674e3c8))
+*  add debug launch configuration and command for program selection ([eefd8bb1](https://github.com/EffectiveRange/vscodeext-er-dev/commit/eefd8bb1cb1b266522f851da9169981a2b8df376))
+*  enable format on save in workspace settings ([2caf6b89](https://github.com/EffectiveRange/vscodeext-er-dev/commit/2caf6b897b004a5039871f6f7aeba9793fdb620c))
+*  add Dependabot configuration for daily updates of GitHub Actions and npm packages ([37a24299](https://github.com/EffectiveRange/vscodeext-er-dev/commit/37a24299836677348ed8b59c3440c6795987deef))
+*  set minimum CMake version to 3.18 in project CMakeLists ([c077c089](https://github.com/EffectiveRange/vscodeext-er-dev/commit/c077c08908a7362416f47d822cd2cc572efe2758))
+*  add .gitignore for script resources ([dcf469d8](https://github.com/EffectiveRange/vscodeext-er-dev/commit/dcf469d8163971265b89c7a6d55fc4ded5d120c9))
+
+##### Bug Fixes
+
+*  update ESLint configuration and dependencies for improved linting and TypeScript support ([cab2bda4](https://github.com/EffectiveRange/vscodeext-er-dev/commit/cab2bda403877e57a3f28c22bbaf03fdda826e9f))
+
+##### Tests
+
+*  remote debug attach test cases, test case stability ([00af9872](https://github.com/EffectiveRange/vscodeext-er-dev/commit/00af98722244def4c2f2698f3405bd0033af3881))
+
 #### 0.4.5 (2024-12-07)
 
 ##### Bug Fixes
