@@ -71,6 +71,11 @@ export abstract class IErDevExecutions {
         device: ErDeviceModel,
     ): Promise<vscode.DebugConfiguration>;
 
+    public abstract debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: vscode.WorkspaceFolder,
+        device: ErDeviceModel,
+    ): Promise<vscode.DebugConfiguration>;
+
     public abstract selectExecutable(
         workspaceFolder: vscode.WorkspaceFolder,
         fullPath?: boolean,
@@ -114,6 +119,53 @@ export abstract class IErDevExecutions {
             const dbgConfig = await this.debugTargetToRemoteSshLaunchConfig(
                 workspaceFolder,
                 exec,
+                activeDevice,
+            );
+            const started = await vscode.debug.startDebugging(workspaceFolder, dbgConfig, {
+                suppressDebugView: true,
+            });
+
+            if (!started) {
+                await this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
+                return;
+            }
+            const actSession = vscode.debug.activeDebugSession;
+            let disposable = vscode.debug.onDidTerminateDebugSession((session) => {
+                if (session === actSession) {
+                    this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
+                    disposable.dispose();
+                }
+            });
+            return started;
+        } catch (error) {
+            this.erext.logChannel.error(`Failed to launch debug target:${error}`);
+            this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
+            return Promise.reject(error);
+        }
+    }
+
+    public async attachTargetDebug(
+        provider: ErDevSSHTreeDataProvider,
+        workspaceFolder?: vscode.WorkspaceFolder,
+        device?: ErDeviceModel,
+    ): Promise<boolean | void> {
+        if (workspaceFolder === undefined) {
+            showNoWorkspaceWarning();
+            return Promise.resolve();
+        }
+        const activeDevice = await setActiveDeviceIfMissing(
+            this.erext.logChannel,
+            provider,
+            device,
+        );
+        // TODO: pick remote process
+        // TODO: setup remote debugger for attach
+        let exec = await this.setupRemoteDebugger(workspaceFolder, activeDevice, {
+            program: 'lol',
+        });
+        try {
+            const dbgConfig = await this.debugTargetToRemoteSshAttachConfig(
+                workspaceFolder,
                 activeDevice,
             );
             const started = await vscode.debug.startDebugging(workspaceFolder, dbgConfig, {

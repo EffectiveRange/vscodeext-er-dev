@@ -12,6 +12,12 @@ import { identityArgs, toHost } from './erdevmodel';
 import { ERExtension } from './erextension';
 
 export class CmakeExecutions extends IErDevExecutions {
+    public debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: vscode.WorkspaceFolder,
+        device: ErDeviceModel,
+    ): Promise<vscode.DebugConfiguration> {
+        throw new Error('Method not implemented.');
+    }
     public getPrograms(workspaceFolder: vscode.WorkspaceFolder): Promise<string[]> {
         throw new Error('Method not implemented.');
     }
@@ -118,6 +124,12 @@ export class CmakeExecutions extends IErDevExecutions {
                         description: 'Enable pretty-printing for gdb',
                         text: '-enable-pretty-printing',
                         ignoreFailures: true,
+                    },
+                    {
+                        text: 'set print elements 0',
+                    },
+                    {
+                        text: 'set scheduler-locking step',
                     },
                 ],
             },

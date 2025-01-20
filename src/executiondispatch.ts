@@ -12,6 +12,12 @@ import { ERExtension } from './erextension';
 import { Executable } from './vscodeUtils';
 
 class NoExecution extends IErDevExecutions {
+    public debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: WorkspaceFolder,
+        device: ErDeviceModel,
+    ): Promise<DebugConfiguration> {
+        return Promise.reject('Method not implemented.');
+    }
     public getPrograms(workspaceFolder: WorkspaceFolder): Promise<string[]> {
         return Promise.resolve([]);
     }
@@ -55,6 +61,15 @@ class NoExecution extends IErDevExecutions {
 }
 
 export class DispatchExecution extends IErDevExecutions {
+    public debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: WorkspaceFolder,
+        device: ErDeviceModel,
+    ): Promise<DebugConfiguration> {
+        return this.getActiveExecution(workspaceFolder).debugTargetToRemoteSshAttachConfig(
+            workspaceFolder,
+            device,
+        );
+    }
     public getPrograms(workspaceFolder: WorkspaceFolder): Promise<string[]> {
         return this.getActiveExecution(workspaceFolder).getPrograms(workspaceFolder);
     }

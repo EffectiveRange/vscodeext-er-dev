@@ -74,6 +74,12 @@
         "icon": "$(debug-alt)"
       },
       {
+        "command": "erdev.remoteAttach",
+        "title": "Attach to Remote Process",
+        "category": "ER Dev",
+        "icon": "$(debug-console)"
+      },
+      {
         "command": "er-ssh-explorer.deployProject",
         "title": "Deploy Project",
         "category": "ER Dev",

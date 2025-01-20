@@ -20,8 +20,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { ERExtension } from './erextension';
 
 export class PythonExecution extends IErDevExecutions {
+    public debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: vscode.WorkspaceFolder,
+        device: ErDeviceModel,
+    ): Promise<vscode.DebugConfiguration> {
+        return Promise.reject('Method not implemented.');
+    }
     public getPrograms(workspaceFolder: vscode.WorkspaceFolder): Promise<string[]> {
-        throw new Error('Method not implemented.');
+        return Promise.reject('Method not implemented.');
     }
     public async cleanupRemoteDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
