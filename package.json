@@ -1,271 +1,280 @@
 {
-  "name": "erdev",
-  "publisher": "EffectiveRangeLLC",
-  "icon": "resources/er_logo_green_256x256.png",
-  "displayName": "Effective-Range Development Extension",
-  "description": "Extension for packaging projects into debian packages,deploying them and remote debugging on Debian based devices",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/EffectiveRange/vscodeext-er-dev"
-  },
-  "version": "0.4.5",
-  "engines": {
-    "vscode": "^1.85.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onStartupFinished",
-    "onCommand:workbench.action.tasks.runTask",
-    "onDebug"
-  ],
-  "main": "./dist/extension.js",
-  "contributes": {
-    "keybindings": [
-      {
-        "command": "erdev.launchProjectExe",
-        "key": "Ctrl+Shift+F5",
-        "when": "!inDebugMode"
-      },
-      {
-        "command": "erdev.deployProject",
-        "key": "Ctrl+Alt+d"
-      }
+    "name": "erdev",
+    "publisher": "EffectiveRangeLLC",
+    "icon": "resources/er_logo_green_256x256.png",
+    "displayName": "Effective-Range Development Extension",
+    "description": "Extension for packaging projects into debian packages,deploying them and remote debugging on Debian based devices",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/EffectiveRange/vscodeext-er-dev"
+    },
+    "version": "0.4.5",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other"
     ],
-    "icons": {
-      "er-crosshair": {
-        "description": "ER Dev crosshair",
-        "default": {
-          "fontPath": "resources/erdev.woff",
-          "fontCharacter": "\\002B"
-        }
-      }
-    },
-    "commands": [
-      {
-        "command": "er-ssh-explorer.refresh",
-        "title": "Refresh SSH Targets",
-        "category": "ER Dev",
-        "icon": "$(refresh)"
-      },
-      {
-        "command": "erdev.packProject",
-        "title": "Pack Project",
-        "category": "ER Dev",
-        "icon": "$(package)"
-      },
-      {
-        "command": "erdev.deployProject",
-        "title": "Deploy Project",
-        "category": "ER Dev",
-        "icon": "$(cloud-upload)"
-      },
-      {
-        "command": "erdev.deployQuickProject",
-        "title": "Quick-Deploy Project",
-        "category": "ER Dev",
-        "icon": "$(zap)"
-      },
-      {
-        "command": "erdev.launchProjectExe",
-        "title": "Launch Executable",
-        "category": "ER Dev",
-        "icon": "$(debug-alt)"
-      },
-      {
-        "command": "er-ssh-explorer.deployProject",
-        "title": "Deploy Project",
-        "category": "ER Dev",
-        "icon": "$(cloud-upload)",
-        "when": "view == er-ssh-explorer"
-      },
-      {
-        "command": "er-ssh-explorer.deployQuickProject",
-        "title": "Quick-Deploy Project",
-        "category": "ER Dev",
-        "icon": "$(zap)",
-        "when": "view == er-ssh-explorer"
-      },
-      {
-        "command": "er-ssh-explorer.launchProjectExe",
-        "title": "Launch Project",
-        "category": "ER Dev",
-        "icon": "$(debug-alt)",
-        "when": "view == er-ssh-explorer"
-      },
-      {
-        "command": "er-ssh-explorer.terminal",
-        "title": "Open terminal",
-        "category": "ER Dev",
-        "icon": "$(terminal)",
-        "when": "view == er-ssh-explorer"
-      },
-      {
-        "command": "erdev.terminal",
-        "title": "Open terminal",
-        "category": "ER Dev",
-        "icon": "$(terminal)"
-      },
-      {
-        "command": "erdev.pickProgram",
-        "title": "Pick Program executable for debug launch",
-        "category": "ER Dev",
-        "icon": "$(file-binary)"
-      }
+    "activationEvents": [
+        "onStartupFinished",
+        "onCommand:workbench.action.tasks.runTask",
+        "onDebug"
     ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "er-explorer",
-          "title": "ER Dev Explorer",
-          "icon": "resources/er_logo_black_opaque.png"
+    "main": "./dist/extension.js",
+    "contributes": {
+        "keybindings": [
+            {
+                "command": "erdev.launchProjectExe",
+                "key": "Ctrl+Shift+F5",
+                "when": "!inDebugMode"
+            },
+            {
+                "command": "erdev.deployProject",
+                "key": "Ctrl+Alt+d"
+            }
+        ],
+        "icons": {
+            "er-crosshair": {
+                "description": "ER Dev crosshair",
+                "default": {
+                    "fontPath": "resources/erdev.woff",
+                    "fontCharacter": "\\002B"
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "er-ssh-explorer.refresh",
+                "title": "Refresh SSH Targets",
+                "category": "ER Dev",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "erdev.packProject",
+                "title": "Pack Project",
+                "category": "ER Dev",
+                "icon": "$(package)"
+            },
+            {
+                "command": "erdev.deployProject",
+                "title": "Deploy Project",
+                "category": "ER Dev",
+                "icon": "$(cloud-upload)"
+            },
+            {
+                "command": "erdev.deployQuickProject",
+                "title": "Quick-Deploy Project",
+                "category": "ER Dev",
+                "icon": "$(zap)"
+            },
+            {
+                "command": "erdev.launchProjectExe",
+                "title": "Launch Executable",
+                "category": "ER Dev",
+                "icon": "$(debug-alt)"
+            },
+            {
+                "command": "erdev.remoteAttach",
+                "title": "Attach to Remote Process",
+                "category": "ER Dev",
+                "icon": "$(debug-console)"
+            },
+            {
+                "command": "er-ssh-explorer.deployProject",
+                "title": "Deploy Project",
+                "category": "ER Dev",
+                "icon": "$(cloud-upload)",
+                "when": "view == er-ssh-explorer"
+            },
+            {
+                "command": "er-ssh-explorer.deployQuickProject",
+                "title": "Quick-Deploy Project",
+                "category": "ER Dev",
+                "icon": "$(zap)",
+                "when": "view == er-ssh-explorer"
+            },
+            {
+                "command": "er-ssh-explorer.launchProjectExe",
+                "title": "Launch Project",
+                "category": "ER Dev",
+                "icon": "$(debug-alt)",
+                "when": "view == er-ssh-explorer"
+            },
+            {
+                "command": "er-ssh-explorer.terminal",
+                "title": "Open terminal",
+                "category": "ER Dev",
+                "icon": "$(terminal)",
+                "when": "view == er-ssh-explorer"
+            },
+            {
+                "command": "erdev.terminal",
+                "title": "Open terminal",
+                "category": "ER Dev",
+                "icon": "$(terminal)"
+            },
+            {
+                "command": "erdev.pickProgram",
+                "title": "Pick Program executable for debug launch",
+                "category": "ER Dev",
+                "icon": "$(file-binary)"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "er-explorer",
+                    "title": "ER Dev Explorer",
+                    "icon": "resources/er_logo_black_opaque.png"
+                }
+            ]
+        },
+        "views": {
+            "er-explorer": [
+                {
+                    "id": "er-ssh-explorer",
+                    "name": "SSH Devices",
+                    "title": "SSH Devices",
+                    "visibility": "collapsed",
+                    "commands": []
+                },
+                {
+                    "id": "er-serial-explorer",
+                    "name": "Serial Devices",
+                    "title": "Serial Devices"
+                }
+            ]
+        },
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "er-ssh-explorer.deployProject",
+                    "when": "false"
+                },
+                {
+                    "command": "er-ssh-explorer.deployQuickProject",
+                    "when": "false"
+                },
+                {
+                    "command": "er-ssh-explorer.launchProjectExe",
+                    "when": "false"
+                },
+                {
+                    "command": "er-ssh-explorer.terminal",
+                    "when": "false"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "er-ssh-explorer.refresh",
+                    "when": "view == er-ssh-explorer",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "er-ssh-explorer.deployProject",
+                    "when": "view == er-ssh-explorer && viewItem == erdevice",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "er-ssh-explorer.deployQuickProject",
+                    "when": "view == er-ssh-explorer && viewItem == erdevice",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "er-ssh-explorer.launchProjectExe",
+                    "when": "view == er-ssh-explorer && viewItem == erdevice",
+                    "group": "inline@3"
+                },
+                {
+                    "command": "er-ssh-explorer.terminal",
+                    "when": "view == er-ssh-explorer && viewItem == erdevice",
+                    "group": "inline@4"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "ER Dev Extension settings",
+            "properties": {
+                "erdev.sshconfig": {
+                    "type": "string",
+                    "default": "~/.ssh/config",
+                    "description": "The path to the ssh config file to use the host definitions from"
+                }
+            }
         }
-      ]
     },
-    "views": {
-      "er-explorer": [
-        {
-          "id": "er-ssh-explorer",
-          "name": "SSH Devices",
-          "title": "SSH Devices",
-          "visibility": "collapsed",
-          "commands": []
-        },
-        {
-          "id": "er-serial-explorer",
-          "name": "Serial Devices",
-          "title": "Serial Devices"
-        }
-      ]
+    "scripts": {
+        "main-out": "json -I -f package.json -e 'this.main=\"./out/extension.js\"'",
+        "main-dist": "json -I -f package.json -e 'this.main=\"./dist/extension.js\"'",
+        "vscode:prepublish": "yarn run compile-production",
+        "fetchtools": "wget -P resources/scripts/ $(curl --silent https://api.github.com/repos/EffectiveRange/packaging-tools/releases | jq -r '.[0] |.assets[0].browser_download_url') && tar -C resources/scripts/  -xzf resources/scripts/packaging-tools.tar.gz  && rm -f  resources/scripts/packaging-tools.tar.gz*",
+        "compile": "yarn install && yarn fetchtools && yarn run main-dist && webpack --mode development",
+        "compile-watch": "yarn install && yarn fetchtools && yarn run main-dist && webpack --mode development --watch --progress",
+        "compile-production": "yarn install && yarn fetchtools && yarn run main-dist && webpack --mode production",
+        "compile-tests": "yarn install &&  yarn fetchtools && yarn run main-out && tsc -p . --outDir out",
+        "watch": "yarn run main-out && tsc -watch -p ./",
+        "prepackage": "rm -rf ./build && mkdir ./build",
+        "package": "vsce package --yarn --out ./build/",
+        "pretest": "yarn run compile-tests && yarn run lint",
+        "watch-tests": "yarn run main-out && tsc -p . -w --outDir out",
+        "test": "yarn run pretest && node ./out/test/runTest.js",
+        "lint": "eslint src --ext ts",
+        "coverage": "c8 --all --100 yarn run test",
+        "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version major && git push origin $(git rev-parse --abbrev-ref HEAD) && git push origin $(git describe)",
+        "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version minor && git push origin $(git rev-parse --abbrev-ref HEAD) && git push origin $(git describe)",
+        "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version patch && git push origin $(git rev-parse --abbrev-ref HEAD) && git push origin $(git describe)"
     },
-    "menus": {
-      "commandPalette": [
-        {
-          "command": "er-ssh-explorer.deployProject",
-          "when": "false"
-        },
-        {
-          "command": "er-ssh-explorer.deployQuickProject",
-          "when": "false"
-        },
-        {
-          "command": "er-ssh-explorer.launchProjectExe",
-          "when": "false"
-        },
-        {
-          "command": "er-ssh-explorer.terminal",
-          "when": "false"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "er-ssh-explorer.refresh",
-          "when": "view == er-ssh-explorer",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "er-ssh-explorer.deployProject",
-          "when": "view == er-ssh-explorer && viewItem == erdevice",
-          "group": "inline@1"
-        },
-        {
-          "command": "er-ssh-explorer.deployQuickProject",
-          "when": "view == er-ssh-explorer && viewItem == erdevice",
-          "group": "inline@2"
-        },
-        {
-          "command": "er-ssh-explorer.launchProjectExe",
-          "when": "view == er-ssh-explorer && viewItem == erdevice",
-          "group": "inline@3"
-        },
-        {
-          "command": "er-ssh-explorer.terminal",
-          "when": "view == er-ssh-explorer && viewItem == erdevice",
-          "group": "inline@4"
-        }
-      ]
+    "devDependencies": {
+        "@types/chai": "^4.3.12",
+        "@types/mocha": "^10.0.6",
+        "@types/node": "^20",
+        "@types/sinon": "^17.0.3",
+        "@types/uuid": "^9.0.8",
+        "@types/vscode": "^1.85.0",
+        "@typescript-eslint/eslint-plugin": "^8.20.0",
+        "@typescript-eslint/parser": "^8.20.0",
+        "@vscode/test-cli": "^0.0.4",
+        "@vscode/test-electron": "^2.4.1",
+        "@vscode/vsce": "^2.31.1",
+        "c8": "^9.1.0",
+        "chai": "^5.1.0",
+        "eslint": "^8.0.1",
+        "eslint-config-love": "^56.0.0",
+        "eslint-plugin-import": "^2.25.2",
+        "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+        "eslint-plugin-promise": "^6.0.0",
+        "generate-changelog": "^1.8.0",
+        "json": "^11.0.0",
+        "mocha": "^10.3.0",
+        "prettier": "^3.4.2",
+        "sinon": "^19.0.2",
+        "ts-loader": "^9.5.1",
+        "typescript": "5.5.4",
+        "webpack": "^5.97.1",
+        "webpack-cli": "^5.1.4"
     },
-    "configuration": {
-      "title": "ER Dev Extension settings",
-      "properties": {
-        "erdev.sshconfig": {
-          "type": "string",
-          "default": "~/.ssh/config",
-          "description": "The path to the ssh config file to use the host definitions from"
-        }
-      }
+    "dependencies": {
+        "compare-versions": "^6.1.0",
+        "glob": "^10.3.10",
+        "lru-cache": "^11.0.2",
+        "shescape": "^2.1.0",
+        "ssh-config": "^4.4.1",
+        "uuid": "^11.0.5",
+        "vscode-cmake-tools": "^1.1.0"
+    },
+    "extensionDependencies": [
+        "ms-vscode.cmake-tools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.debugpy"
+    ],
+    "extensionKind": [
+        "workspace"
+    ],
+    "resolutions": {
+        "wrap-ansi": "7.0.0",
+        "strip-ansi": "6.0.1",
+        "string-width": "4.2.3"
     }
-  },
-  "scripts": {
-    "main-out": "json -I -f package.json -e 'this.main=\"./out/extension.js\"'",
-    "main-dist": "json -I -f package.json -e 'this.main=\"./dist/extension.js\"'",
-    "vscode:prepublish": "yarn run compile-production",
-    "fetchtools": "wget -P resources/scripts/ $(curl --silent https://api.github.com/repos/EffectiveRange/packaging-tools/releases | jq -r '.[0] |.assets[0].browser_download_url') && tar -C resources/scripts/  -xzf resources/scripts/packaging-tools.tar.gz  && rm -f  resources/scripts/packaging-tools.tar.gz*",
-    "compile": "yarn install && yarn fetchtools && yarn run main-dist && webpack --mode development",
-    "compile-watch": "yarn install && yarn fetchtools && yarn run main-dist && webpack --mode development --watch --progress",
-    "compile-production": "yarn install && yarn fetchtools && yarn run main-dist && webpack --mode production",
-    "compile-tests": "yarn install &&  yarn fetchtools && yarn run main-out && tsc -p . --outDir out",
-    "watch": "yarn run main-out && tsc -watch -p ./",
-    "prepackage": "rm -rf ./build && mkdir ./build",
-    "package": "vsce package --yarn --out ./build/",
-    "pretest": "yarn run compile-tests && yarn run lint",
-    "watch-tests": "yarn run main-out && tsc -p . -w --outDir out",
-    "test": "yarn run pretest && node ./out/test/runTest.js",
-    "lint": "eslint src --ext ts",
-    "coverage": "c8 --all --100 yarn run test",
-    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version major && git push origin $(git rev-parse --abbrev-ref HEAD) && git push origin $(git describe)",
-    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version minor && git push origin $(git rev-parse --abbrev-ref HEAD) && git push origin $(git describe)",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && npm version patch && git push origin $(git rev-parse --abbrev-ref HEAD) && git push origin $(git describe)"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.3.12",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "18.x",
-    "@types/uuid": "^9.0.8",
-    "@types/vscode": "^1.85.0",
-    "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "@typescript-eslint/parser": "^6.15.0",
-    "@vscode/test-cli": "^0.0.4",
-    "@vscode/test-electron": "^2.4.1",
-    "@vscode/vsce": "^2.31.1",
-    "c8": "^9.1.0",
-    "chai": "^5.1.0",
-    "eslint": "^8.0.1",
-    "eslint-config-standard-with-typescript": "^43.0.1",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
-    "eslint-plugin-promise": "^6.0.0",
-    "generate-changelog": "^1.8.0",
-    "json": "^11.0.0",
-    "mocha": "^10.3.0",
-    "prettier": "^3.4.2",
-    "ts-loader": "^9.5.1",
-    "typescript": "*",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^5.1.4"
-  },
-  "dependencies": {
-    "compare-versions": "^6.1.0",
-    "glob": "^10.3.10",
-    "shescape": "^2.1.0",
-    "ssh-config": "^4.4.1",
-    "uuid": "^11.0.5",
-    "vscode-cmake-tools": "^1.1.0"
-  },
-  "extensionDependencies": [
-    "ms-vscode.cmake-tools",
-    "ms-vscode.cpptools-extension-pack",
-    "ms-python.debugpy"
-  ],
-  "extensionKind": [
-    "workspace"
-  ],
-  "resolutions": {
-    "wrap-ansi": "7.0.0",
-    "strip-ansi": "6.0.1",
-    "string-width": "4.2.3"
-  }
 }

@@ -35,10 +35,15 @@ fi
 
 shift 4
 
+IS_PYTHON="false"
 DEB_FILES_LIST=$("$PACK_SCRIPT" $PROJTYPE "$WSPDIR")
 
 for file in "$DEB_FILES_LIST"
 do
+# if any of the artifacts is a wheel file, then it is a python package and python pip install will be used
+if [[ ${file} == *.whl ]]; then
+    IS_PYTHON="true"
+fi
 DEB_FILES_NAMES="$DEB_FILES_NAMES ./$(basename $file)"
 done
 
@@ -49,7 +54,9 @@ ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q "$@" "$TARGET
 SSHARGS="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q $@"
 rsync -avzc --progress -e "$SSHARGS" $(echo $DEB_FILES_LIST | tr '\n' ' ') "$TARGET:/tmp/erdev/"
 
-if [ $TYPE == "quick" ]; then
+if [ $IS_PYTHON == "true" ]; then
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo pip install --force-reinstall $DEB_FILES_NAMES"
+elif [ $TYPE == "quick" ]; then
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo dpkg -i $DEB_FILES_NAMES"
 elif [ $TYPE == "all" ]; then
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo apt install -y --allow-downgrades --reinstall --no-install-recommends $DEB_FILES_NAMES" 

@@ -21,7 +21,7 @@ import { ERExtension } from './erextension';
 
 export class PythonExecution extends IErDevExecutions {
     public getPrograms(workspaceFolder: vscode.WorkspaceFolder): Promise<string[]> {
-        throw new Error('Method not implemented.');
+        return Promise.reject('Method not implemented.');
     }
     public async cleanupRemoteDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
@@ -46,17 +46,16 @@ export class PythonExecution extends IErDevExecutions {
         }
     }
 
-    public async setupRemoteDebugger(
+    async launchSshTaskForDebugger(
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
-    ): Promise<DebugLaunchContext> {
-        await this.ensureDebugPyInstalled(workspaceFolder, device);
-        const retryCount = 3;
-        for (let i = 0; i < retryCount; i++) {
-            const port = getRandomPort();
-            const sessionId = uuidv4();
-            let [exec, res] = await sshTask(
+        attach: boolean,
+        port: number,
+        sessionId: string,
+    ): Promise<[vscode.TaskExecution, Promise<number | undefined>]> {
+        if (attach === true) {
+            return sshTask(
                 this.erext.logChannel,
                 workspaceFolder,
                 device,
@@ -65,14 +64,52 @@ export class PythonExecution extends IErDevExecutions {
                 sessionId,
                 port.toString(),
                 //NOTE: the program path should be determined dynamically
-                `/usr/local/bin/${context.program}`,
+                '--pid',
+                `${context.program as number}`,
+            );
+        }
+        let args = context.args ?? [];
+        return sshTask(
+            this.erext.logChannel,
+            workspaceFolder,
+            device,
+            'sudo',
+            '/tmp/start_debugpy.sh',
+            sessionId,
+            port.toString(),
+            //NOTE: the program path should be determined dynamically
+            '--wait-for-client',
+            `/usr/local/bin/${context.program}`,
+            ...args,
+        );
+    }
+
+    public async setupRemoteDebugger(
+        workspaceFolder: vscode.WorkspaceFolder,
+        device: ErDeviceModel,
+        context: DebugLaunchContext,
+        attach?: boolean,
+    ): Promise<DebugLaunchContext> {
+        await this.ensureDebugPyInstalled(workspaceFolder, device);
+        const retryCount = 3;
+        for (let i = 0; i < retryCount; i++) {
+            const port = getRandomPort();
+            const sessionId = uuidv4();
+            let [exec, res] = await this.launchSshTaskForDebugger(
+                workspaceFolder,
+                device,
+                context,
+                attach === true,
+                port,
+                sessionId,
             );
             const code = await res;
             const addressInUseError = 75;
             if (code === 0) {
                 return {
                     //NOTE: the program path should be determined dynamically
-                    program: `/usr/local/bin/${context.program}`,
+                    program:
+                        attach === true ? context.program : `/usr/local/bin/${context.program}`,
                     execution: exec,
                     debugPort: port,
                     sessionId,
@@ -184,6 +221,15 @@ export class PythonExecution extends IErDevExecutions {
             ],
         };
     }
+
+    public debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: vscode.WorkspaceFolder,
+        program: DebugLaunchContext,
+        device: ErDeviceModel,
+    ): Promise<vscode.DebugConfiguration> {
+        return this.debugTargetToRemoteSshLaunchConfig(workspaceFolder, program, device);
+    }
+
     public async selectExecutable(
         workspaceFolder: vscode.WorkspaceFolder,
         fullPath?: boolean,

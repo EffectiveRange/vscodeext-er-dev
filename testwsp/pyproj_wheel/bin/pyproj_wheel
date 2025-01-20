@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+from time import sleep
+from pyproj_wheel.main import do_something
+
+if __name__ == "__main__":
+    while True:
+        do_something()
+        sleep(1)

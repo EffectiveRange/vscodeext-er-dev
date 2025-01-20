@@ -8,6 +8,9 @@
         },
         {
             "path": "pyproj"
+        },
+        {
+            "path": "pyproj_wheel"
         }
     ],
     "settings": {}

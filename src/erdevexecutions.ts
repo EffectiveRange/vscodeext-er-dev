@@ -8,8 +8,9 @@ import * as path from 'path';
 import { ErDevSSHTreeDataProvider, ErDeviceItem } from './erdevproviders';
 import { identityArgs, toHost } from './erdevmodel';
 import { ErDeviceModel } from './api';
-import { execShell, Executable } from './vscodeUtils';
+import { execShell, Executable, sshExecWithOutput } from './vscodeUtils';
 import { ERExtension } from './erextension';
+import { showArgsPick } from './argspick';
 
 export type Program = string | number; // executable name or pid
 export interface DebugLaunchContext {
@@ -17,6 +18,15 @@ export interface DebugLaunchContext {
     execution?: vscode.TaskExecution;
     debugPort?: number;
     sessionId?: string;
+    process?: Process;
+    args?: string[];
+}
+
+export interface Process {
+    pid: number;
+    command: string;
+    args: string;
+    executable: string;
 }
 
 export abstract class IErDevExecutions {
@@ -71,6 +81,12 @@ export abstract class IErDevExecutions {
         device: ErDeviceModel,
     ): Promise<vscode.DebugConfiguration>;
 
+    public abstract debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: vscode.WorkspaceFolder,
+        program: DebugLaunchContext,
+        device: ErDeviceModel,
+    ): Promise<vscode.DebugConfiguration>;
+
     public abstract selectExecutable(
         workspaceFolder: vscode.WorkspaceFolder,
         fullPath?: boolean,
@@ -80,6 +96,7 @@ export abstract class IErDevExecutions {
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
+        attach?: boolean,
     ): Promise<DebugLaunchContext>;
 
     public abstract cleanupRemoteDebugger(
@@ -107,8 +124,10 @@ export abstract class IErDevExecutions {
             vscode.window.showWarningMessage('No launch target selected!');
             return Promise.resolve();
         }
+        let args = await showArgsPick();
         let exec = await this.setupRemoteDebugger(workspaceFolder, activeDevice, {
             program: exe.label,
+            args: args,
         });
         try {
             const dbgConfig = await this.debugTargetToRemoteSshLaunchConfig(
@@ -137,6 +156,122 @@ export abstract class IErDevExecutions {
             this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
             return Promise.reject(error);
         }
+    }
+
+    public async listRemoteProcesses(
+        workspaceFolder: vscode.WorkspaceFolder,
+        device: ErDeviceModel,
+    ): Promise<Process[]> {
+        let out = await sshExecWithOutput(
+            this.erext.logChannel,
+            workspaceFolder,
+            device,
+            'ps',
+            '-eo',
+            'pid,comm,args',
+        );
+        if (out.exitCode !== 0 || out.stdout instanceof Error) {
+            return Promise.reject(`Failed to list processes on ${device.hostname}`);
+        }
+        let psout = out.stdout.split('\n');
+        psout.shift();
+        return psout
+            .map((line) => {
+                let [pid, command, ...args] = line.trim().split(' ');
+                return {
+                    pid: parseInt(pid),
+                    command,
+                    args: args.join(' ').trim(),
+                    executable: args.join(' ').trim().split(' ')[0] ?? command,
+                };
+            })
+            .filter((p) => !Number.isNaN(p.pid));
+    }
+
+    public async attachTargetDebug(
+        provider: ErDevSSHTreeDataProvider,
+        workspaceFolder?: vscode.WorkspaceFolder,
+        device?: ErDeviceModel,
+    ): Promise<boolean | void> {
+        if (workspaceFolder === undefined) {
+            showNoWorkspaceWarning();
+            return Promise.resolve();
+        }
+        const activeDevice = await setActiveDeviceIfMissing(
+            this.erext.logChannel,
+            provider,
+            device,
+        );
+        let process = await this.selectRemoteProcess(workspaceFolder, activeDevice);
+        if (process === undefined) {
+            return Promise.resolve();
+        }
+        let exec = await this.setupRemoteDebugger(
+            workspaceFolder,
+            activeDevice,
+            {
+                program: process.pid,
+                process: process,
+            },
+            true,
+        );
+        try {
+            const dbgConfig = await this.debugTargetToRemoteSshAttachConfig(
+                workspaceFolder,
+                exec,
+                activeDevice,
+            );
+            const started = await vscode.debug.startDebugging(workspaceFolder, dbgConfig, {
+                suppressDebugView: true,
+            });
+
+            if (!started) {
+                await this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
+                return;
+            }
+            const actSession = vscode.debug.activeDebugSession;
+            let disposable = vscode.debug.onDidTerminateDebugSession((session) => {
+                if (session === actSession) {
+                    this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
+                    disposable.dispose();
+                }
+            });
+            return started;
+        } catch (error) {
+            this.erext.logChannel.error(`Failed to launch debug target:${error}`);
+            this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
+            return Promise.reject(error);
+        }
+    }
+
+    private async selectRemoteProcess(
+        workspaceFolder: vscode.WorkspaceFolder,
+        activeDevice: ErDeviceModel,
+    ): Promise<Process | undefined> {
+        let out = await this.listRemoteProcesses(workspaceFolder, activeDevice);
+        let picks = out.map((p) => {
+            return {
+                label: p.command,
+                description: `pid=${p.pid}, cmd=${p.args}`,
+                pid: p.pid,
+                args: p.args,
+                executable: p.executable,
+            };
+        });
+        let process = await vscode.window.showQuickPick(picks, {
+            placeHolder: `Select process to attach on ${activeDevice.host}`,
+            canPickMany: false,
+            matchOnDescription: true,
+        });
+        if (process !== undefined) {
+            return {
+                pid: process.pid,
+                command: process.label,
+                args: process.args,
+                executable: process.executable,
+            };
+        }
+        return process;
     }
 
     ///////////////////////

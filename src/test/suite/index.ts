@@ -16,7 +16,7 @@ export async function run(): Promise<void> {
     // Run the mocha test
     return new Promise<void>((resolve, reject) => {
         try {
-            mocha.timeout(100000);
+            mocha.timeout(120000);
             // Log the name of each test before it starts.
             const beforeEach: Mocha.Func = function (this: Mocha.Context, done: Mocha.Done) {
                 console.log(

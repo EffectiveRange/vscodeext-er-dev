@@ -19,7 +19,10 @@
                 ]
             }
         ],
-        "@typescript-eslint/semi": "warn",
+        "semi-style": [
+            "warn",
+            "last"
+        ],
         "curly": "warn",
         "eqeqeq": "warn",
         "no-throw-literal": "warn",

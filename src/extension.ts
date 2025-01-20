@@ -65,7 +65,11 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
                 erExec.launchTargetDebug(erProvider, getActiveWorkspace(), device.model),
         ),
     );
-
+    context.subscriptions.push(
+        vscode.commands.registerCommand('er-ssh-explorer.remoteAttach', (device: ErDeviceItem) =>
+            erExec.attachTargetDebug(erProvider, getActiveWorkspace(), device.model),
+        ),
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand('er-ssh-explorer.terminal', (device: ErDeviceItem) =>
             deviceExec.launchTerminal(erProvider, device.model),
@@ -94,6 +98,8 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
     createDeployStatusBarItem(context, erProvider, erExec, true);
 
     createLaunchStatusBarItem(context, erProvider, erExec);
+
+    createAttachStatusBarItem(context, erProvider, erExec);
     // TODO items:
 
     // remote debug attach (C++, python)
@@ -188,6 +194,27 @@ function createLaunchStatusBarItem(
     erStatusBar.show();
 }
 
+function createAttachStatusBarItem(
+    context: vscode.ExtensionContext,
+    provider: ErDevSSHTreeDataProvider,
+    erExec: DispatchExecution,
+) {
+    let erStatusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 97);
+    erStatusBar.command = 'erdev.remoteAttach';
+    setAttachStatusText(provider.model, erStatusBar);
+    context.subscriptions.push(erStatusBar);
+    context.subscriptions.push(
+        vscode.commands.registerCommand('erdev.remoteAttach', () =>
+            erExec.attachTargetDebug(
+                provider,
+                getActiveWorkspace(),
+                provider.model.getActiveDevice(),
+            ),
+        ),
+    );
+    erStatusBar.show();
+}
+
 function setPackStatusText(erStatusBar: vscode.StatusBarItem) {
     const wsp = getActiveWorkspace()?.name ?? '';
     erStatusBar.text = '$(package) Pack';
@@ -208,6 +235,10 @@ function setQuickDeployStatusText(model: ErExtensionModel, erStatusBar: vscode.S
 
 function setLaunchStatusText(model: ErExtensionModel, erStatusBar: vscode.StatusBarItem) {
     erStatusBar.text = '$(debug-alt) Launch';
+}
+
+function setAttachStatusText(model: ErExtensionModel, erStatusBar: vscode.StatusBarItem) {
+    erStatusBar.text = '$(debug-console) Attach';
 }
 
 // This method is called when your extension is deactivated
