@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+from pyproj_wheel.main import do_something
+
+if __name__ == "__main__":
+    do_something()
