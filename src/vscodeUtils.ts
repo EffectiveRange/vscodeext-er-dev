@@ -150,6 +150,32 @@ export async function sshTask(
     );
 }
 
+export async function sshExecWithOutput(
+    output: vscode.LogOutputChannel,
+    wsp: vscode.WorkspaceFolder,
+    device: ErDeviceModel,
+    command: string,
+    ...args: string[]
+): Promise<ShellExecResult> {
+    const remoteCmd = `${command} ${args.join(' ')}`;
+    return execShellWithOutput(
+        output,
+        wsp,
+        `Remote Exec:${device}`,
+        'ssh',
+        '-t',
+        '-t',
+        '-o',
+        'StrictHostKeyChecking=no',
+        '-o',
+        'UserKnownHostsFile=/dev/null',
+        '-q',
+        ...identityArgs(device),
+        toHost(device),
+        shescape.quote(remoteCmd),
+    );
+}
+
 export async function sshExec(
     output: vscode.LogOutputChannel,
     wsp: vscode.WorkspaceFolder,
