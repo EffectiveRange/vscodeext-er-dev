@@ -251,7 +251,7 @@ export abstract class IErDevExecutions {
                 description: `pid=${p.pid}, cmd=${p.args}`,
                 pid: p.pid,
                 args: p.args,
-                excutable: p.executable,
+                executable: p.executable,
             };
         });
         let process = await vscode.window.showQuickPick(picks, {
@@ -263,7 +263,7 @@ export abstract class IErDevExecutions {
                 pid: process.pid,
                 command: process.label,
                 args: process.args,
-                executable: process.excutable,
+                executable: process.executable,
             };
         }
         return process;

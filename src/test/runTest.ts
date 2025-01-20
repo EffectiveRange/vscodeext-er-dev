@@ -50,6 +50,8 @@ async function main() {
             ],
             extensionTestsEnv: {
                 DONT_PROMPT_WSL_INSTALL: '1',
+                CMT_TESTING: '1',
+                CMT_QUIET_CONSOLE: '1',
             },
         });
     } catch (err) {

@@ -15,7 +15,7 @@ fi
 
 shift 2
 
-if [ -z "$@" ]; then
+if [ $# -eq 0 ]; then
   echo "No debugpy args provided, at least the executable must be specified"
   exit 1
 fi
