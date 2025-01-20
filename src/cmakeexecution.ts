@@ -93,7 +93,7 @@ export class CmakeExecutions extends IErDevExecutions {
             name: `ErDev: Launch "${program}"`,
             request: 'launch',
             program: `${program.program}`,
-            args: [],
+            args: program.args ?? [],
             stopAtEntry: true,
             cwd: '/',
             environment: [],

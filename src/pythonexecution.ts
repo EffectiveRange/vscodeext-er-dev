@@ -68,6 +68,7 @@ export class PythonExecution extends IErDevExecutions {
                 `${context.program as number}`,
             );
         }
+        let args = context.args ?? [];
         return sshTask(
             this.erext.logChannel,
             workspaceFolder,
@@ -79,6 +80,7 @@ export class PythonExecution extends IErDevExecutions {
             //NOTE: the program path should be determined dynamically
             '--wait-for-client',
             `/usr/local/bin/${context.program}`,
+            ...args,
         );
     }
 

@@ -10,6 +10,7 @@ import { identityArgs, toHost } from './erdevmodel';
 import { ErDeviceModel } from './api';
 import { execShell, Executable, sshExecWithOutput } from './vscodeUtils';
 import { ERExtension } from './erextension';
+import { showArgsPick } from './argspick';
 
 export type Program = string | number; // executable name or pid
 export interface DebugLaunchContext {
@@ -18,6 +19,7 @@ export interface DebugLaunchContext {
     debugPort?: number;
     sessionId?: string;
     process?: Process;
+    args?: string[];
 }
 
 export interface Process {
@@ -122,8 +124,10 @@ export abstract class IErDevExecutions {
             vscode.window.showWarningMessage('No launch target selected!');
             return Promise.resolve();
         }
+        let args = await showArgsPick();
         let exec = await this.setupRemoteDebugger(workspaceFolder, activeDevice, {
             program: exe.label,
+            args: args,
         });
         try {
             const dbgConfig = await this.debugTargetToRemoteSshLaunchConfig(
@@ -257,6 +261,7 @@ export abstract class IErDevExecutions {
         let process = await vscode.window.showQuickPick(picks, {
             placeHolder: `Select process to attach on ${activeDevice.host}`,
             canPickMany: false,
+            matchOnDescription: true,
         });
         if (process !== undefined) {
             return {

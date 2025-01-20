@@ -11,11 +11,16 @@ import { getWorkspace } from '../utils';
 import { spawn, spawnSync } from 'child_process';
 import { ErDevApi } from '../../api';
 
+import { ArgsPick } from '../../argspick';
+
 suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests.');
 
     suiteSetup(async function (this: Mocha.Context) {
         this.timeout(100000);
+        const argsPickStub = sinon.stub(ArgsPick, 'get_pick_result').resolves({
+            label: '-c test',
+        });
     });
 
     setup(async function (this: Mocha.Context) {
@@ -267,13 +272,15 @@ suite('Extension Test Suite', () => {
                 disp.dispose();
             });
         });
-        const quickPickStub = sinon.stub(vscode.window, 'showQuickPick').resolves({
-            label: 'proj1_2',
-            description: `pid=${pid}, cmd=proj1_2`,
-            pid: pid,
-            args: ['proj1_2'],
-            executable: 'proj1_2',
-        } as vscode.QuickPickItem);
+        const quickPickStub = sinon.stub(vscode.window, 'showQuickPick').callsFake((items) => {
+            items = items as vscode.QuickPickItem[];
+            items = items.filter(
+                (item) => item.label === 'proj1_2' && item.description?.startsWith(`pid=${pid}`),
+            );
+            assert.strictEqual(items.length, 1);
+            return Promise.resolve(items[0]);
+        });
+
         await vscode.commands.executeCommand('erdev.remoteAttach');
         quickPickStub.restore();
 
@@ -365,13 +372,15 @@ suite('Extension Test Suite', () => {
                 disp.dispose();
             });
         });
-        const quickPickStub = sinon.stub(vscode.window, 'showQuickPick').resolves({
-            label: 'pyproj_wheel',
-            description: `pid=${pid}, cmd=pyproj_wheel`,
-            pid: pid,
-            args: ['pyproj_wheel'],
-            executable: '/usr/bin/python3',
-        } as vscode.QuickPickItem);
+        const quickPickStub = sinon.stub(vscode.window, 'showQuickPick').callsFake((items) => {
+            items = items as vscode.QuickPickItem[];
+            items = items.filter(
+                (item) =>
+                    item.label === 'pyproj_wheel' && item.description?.startsWith(`pid=${pid}`),
+            );
+            assert.strictEqual(items.length, 1);
+            return Promise.resolve(items[0]);
+        });
         await vscode.commands.executeCommand('erdev.remoteAttach');
         quickPickStub.restore();
 
