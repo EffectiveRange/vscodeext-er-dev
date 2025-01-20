@@ -8,7 +8,7 @@ import * as path from 'path';
 import { ErDevSSHTreeDataProvider, ErDeviceItem } from './erdevproviders';
 import { identityArgs, toHost } from './erdevmodel';
 import { ErDeviceModel } from './api';
-import { execShell, Executable } from './vscodeUtils';
+import { execShell, Executable, sshExecWithOutput } from './vscodeUtils';
 import { ERExtension } from './erextension';
 
 export type Program = string | number; // executable name or pid
@@ -17,6 +17,14 @@ export interface DebugLaunchContext {
     execution?: vscode.TaskExecution;
     debugPort?: number;
     sessionId?: string;
+    process?: Process;
+}
+
+export interface Process {
+    pid: number;
+    command: string;
+    args: string;
+    executable: string;
 }
 
 export abstract class IErDevExecutions {
@@ -73,6 +81,7 @@ export abstract class IErDevExecutions {
 
     public abstract debugTargetToRemoteSshAttachConfig(
         workspaceFolder: vscode.WorkspaceFolder,
+        program: DebugLaunchContext,
         device: ErDeviceModel,
     ): Promise<vscode.DebugConfiguration>;
 
@@ -85,6 +94,7 @@ export abstract class IErDevExecutions {
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
+        attach?: boolean,
     ): Promise<DebugLaunchContext>;
 
     public abstract cleanupRemoteDebugger(
@@ -144,6 +154,36 @@ export abstract class IErDevExecutions {
         }
     }
 
+    public async listRemoteProcesses(
+        workspaceFolder: vscode.WorkspaceFolder,
+        device: ErDeviceModel,
+    ): Promise<Process[]> {
+        let out = await sshExecWithOutput(
+            this.erext.logChannel,
+            workspaceFolder,
+            device,
+            'ps',
+            '-eo',
+            'pid,comm,args',
+        );
+        if (out.exitCode !== 0 || out.stdout instanceof Error) {
+            return Promise.reject(`Failed to list processes on ${device.hostname}`);
+        }
+        let psout = out.stdout.split('\n');
+        psout.shift();
+        return psout
+            .map((line) => {
+                let [pid, command, ...args] = line.trim().split(' ');
+                return {
+                    pid: parseInt(pid),
+                    command,
+                    args: args.join(' ').trim(),
+                    executable: args.join(' ').trim().split(' ')[0] ?? command,
+                };
+            })
+            .filter((p) => !Number.isNaN(p.pid));
+    }
+
     public async attachTargetDebug(
         provider: ErDevSSHTreeDataProvider,
         workspaceFolder?: vscode.WorkspaceFolder,
@@ -158,14 +198,23 @@ export abstract class IErDevExecutions {
             provider,
             device,
         );
-        // TODO: pick remote process
-        // TODO: setup remote debugger for attach
-        let exec = await this.setupRemoteDebugger(workspaceFolder, activeDevice, {
-            program: 'lol',
-        });
+        let process = await this.selectRemoteProcess(workspaceFolder, activeDevice);
+        if (process === undefined) {
+            return Promise.resolve();
+        }
+        let exec = await this.setupRemoteDebugger(
+            workspaceFolder,
+            activeDevice,
+            {
+                program: process.pid,
+                process: process,
+            },
+            true,
+        );
         try {
             const dbgConfig = await this.debugTargetToRemoteSshAttachConfig(
                 workspaceFolder,
+                exec,
                 activeDevice,
             );
             const started = await vscode.debug.startDebugging(workspaceFolder, dbgConfig, {
@@ -189,6 +238,35 @@ export abstract class IErDevExecutions {
             this.cleanupRemoteDebugger(workspaceFolder, activeDevice, exec);
             return Promise.reject(error);
         }
+    }
+
+    private async selectRemoteProcess(
+        workspaceFolder: vscode.WorkspaceFolder,
+        activeDevice: ErDeviceModel,
+    ): Promise<Process | undefined> {
+        let out = await this.listRemoteProcesses(workspaceFolder, activeDevice);
+        let picks = out.map((p) => {
+            return {
+                label: p.command,
+                description: `pid=${p.pid}, cmd=${p.args}`,
+                pid: p.pid,
+                args: p.args,
+                excutable: p.executable,
+            };
+        });
+        let process = await vscode.window.showQuickPick(picks, {
+            placeHolder: `Select process to attach on ${activeDevice.host}`,
+            canPickMany: false,
+        });
+        if (process !== undefined) {
+            return {
+                pid: process.pid,
+                command: process.label,
+                args: process.args,
+                executable: process.excutable,
+            };
+        }
+        return process;
     }
 
     ///////////////////////

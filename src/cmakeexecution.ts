@@ -12,12 +12,6 @@ import { identityArgs, toHost } from './erdevmodel';
 import { ERExtension } from './erextension';
 
 export class CmakeExecutions extends IErDevExecutions {
-    public debugTargetToRemoteSshAttachConfig(
-        workspaceFolder: vscode.WorkspaceFolder,
-        device: ErDeviceModel,
-    ): Promise<vscode.DebugConfiguration> {
-        throw new Error('Method not implemented.');
-    }
     public getPrograms(workspaceFolder: vscode.WorkspaceFolder): Promise<string[]> {
         throw new Error('Method not implemented.');
     }
@@ -35,6 +29,7 @@ export class CmakeExecutions extends IErDevExecutions {
         workspaceFolder: vscode.WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
+        attach?: boolean,
     ): Promise<DebugLaunchContext> {
         return context;
     }
@@ -125,17 +120,54 @@ export class CmakeExecutions extends IErDevExecutions {
                         text: '-enable-pretty-printing',
                         ignoreFailures: true,
                     },
-                    {
-                        text: 'set print elements 0',
-                    },
-                    {
-                        text: 'set scheduler-locking step',
-                    },
                 ],
             },
         };
     }
+    public debugTargetToRemoteSshAttachConfig(
+        workspaceFolder: vscode.WorkspaceFolder,
+        program: DebugLaunchContext,
+        device: ErDeviceModel,
+    ): Promise<vscode.DebugConfiguration> {
+        return Promise.resolve({
+            type: 'cppdbg',
+            name: `ErDev: Launch "${program}"`,
+            request: 'attach',
+            processId: `${program.program as number}`,
+            program: `${program.process?.executable}`,
+            args: [],
+            stopAtEntry: true,
+            cwd: '/',
+            environment: [],
+            externalConsole: false,
+            pipeTransport: {
+                pipeCwd: '/usr/bin',
+                pipeProgram: '/usr/bin/ssh',
+                pipeArgs: [
+                    '-o',
+                    'StrictHostKeyChecking=no',
+                    '-o',
+                    'UserKnownHostsFile=/dev/null',
+                    '-q',
+                    ...identityArgs(device),
+                    toHost(device),
+                ],
+                debuggerPath: 'sudo /usr/bin/gdb',
+            },
+            linux: {
+                MIMode: 'gdb',
+                setupCommands: [
+                    {
+                        description: 'Enable pretty-printing for gdb',
+                        text: '-enable-pretty-printing',
+                        ignoreFailures: true,
+                    },
+                ],
+            },
+        });
+    }
 }
+
 interface CmakeProjectExecTarget {
     project: cmake.CodeModel.Project;
     target: cmake.CodeModel.Target;

@@ -9,11 +9,12 @@ import { PythonExecution } from './pythonexecution';
 import { CmakeExecutions } from './cmakeexecution';
 import { ErDeviceModel } from './api';
 import { ERExtension } from './erextension';
-import { Executable } from './vscodeUtils';
+import { execShellWithOutput, Executable, sshExecWithOutput } from './vscodeUtils';
 
 class NoExecution extends IErDevExecutions {
     public debugTargetToRemoteSshAttachConfig(
         workspaceFolder: WorkspaceFolder,
+        program: DebugLaunchContext,
         device: ErDeviceModel,
     ): Promise<DebugConfiguration> {
         return Promise.reject('Method not implemented.');
@@ -34,6 +35,7 @@ class NoExecution extends IErDevExecutions {
         workspaceFolder: WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
+        attach?: boolean,
     ): Promise<DebugLaunchContext> {
         return context;
     }
@@ -63,10 +65,12 @@ class NoExecution extends IErDevExecutions {
 export class DispatchExecution extends IErDevExecutions {
     public debugTargetToRemoteSshAttachConfig(
         workspaceFolder: WorkspaceFolder,
+        program: DebugLaunchContext,
         device: ErDeviceModel,
     ): Promise<DebugConfiguration> {
         return this.getActiveExecution(workspaceFolder).debugTargetToRemoteSshAttachConfig(
             workspaceFolder,
+            program,
             device,
         );
     }
@@ -98,11 +102,13 @@ export class DispatchExecution extends IErDevExecutions {
         workspaceFolder: WorkspaceFolder,
         device: ErDeviceModel,
         context: DebugLaunchContext,
+        attach?: boolean,
     ): Promise<DebugLaunchContext> {
         return this.getActiveExecution(workspaceFolder).setupRemoteDebugger(
             workspaceFolder,
             device,
             context,
+            attach,
         );
     }
     private cmakeExec: CmakeExecutions;

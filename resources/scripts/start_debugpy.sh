@@ -20,20 +20,26 @@ if [ -z "$@" ]; then
   exit 1
 fi
 
-setsid python3 -m debugpy --listen $LISTEN_PORT --wait-for-client --log-to /var/log/debugpy/ "$@"  2>&1 > /dev/null & 
+DEBUGPY_LOG_DIR="/tmp"
+
+setsid python3 -m debugpy --listen 0.0.0.0:$LISTEN_PORT  --log-to $DEBUGPY_LOG_DIR/ "$@"  2>&1 > /dev/null & 
 DEBUGPY_PID="$!" 
 echo "$DEBUGPY_PID" > /var/log/debugpy-$SESSION_ID.pid
 
 STARTUP_TIMEOUT="30s"
 
-(timeout $STARTUP_TIMEOUT tail -n0 -F /var/log/debugpy/debugpy.server-$DEBUGPY_PID.log &) | grep -qE "(: wait_for_client\(\)|RuntimeError.*Address already in use)" 
+(timeout $STARTUP_TIMEOUT tail -n0 -F $DEBUGPY_LOG_DIR/debugpy.server-$DEBUGPY_PID.log &) | grep -qE "(: wait_for_client\(\)|Code injection into PID=[0-9]+ completed|RuntimeError.*Address already in use)" 
 
-if grep -E "wait_for_client\(\)" /var/log/debugpy/debugpy.server-$DEBUGPY_PID.log ; then
+if grep -E "wait_for_client\(\)" $DEBUGPY_LOG_DIR/debugpy.server-$DEBUGPY_PID.log ; then
   echo "Successfully started debugpy!"
   exit 0
 fi
+if grep -E "Code injection into PID=[0-9]+ completed" $DEBUGPY_LOG_DIR/debugpy.server-$DEBUGPY_PID.log ; then
+  echo "Successfully started debugpy for attach!"
+  exit 0
+fi
 
-if grep -E "RuntimeError.*Address already in use" /var/log/debugpy/debugpy.server-$DEBUGPY_PID.log ; then
+if grep -E "RuntimeError.*Address already in use" $DEBUGPY_LOG_DIR/debugpy.server-$DEBUGPY_PID.log ; then
   echo "Failed to start debugpy: Address already in use"
   exit 75 # should retry with a different port
 fi
