@@ -257,7 +257,7 @@
     },
     "dependencies": {
         "compare-versions": "^6.1.0",
-        "glob": "^10.3.10",
+        "glob": "^11.0.1",
         "lru-cache": "^11.0.2",
         "shescape": "^2.1.0",
         "ssh-config": "^4.4.1",
