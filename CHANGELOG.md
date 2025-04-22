@@ -1,3 +1,25 @@
+#### 0.6.1 (2025-04-22)
+
+##### Chores
+
+*  add packaging-tools submodule ([129e21b9](https://github.com/EffectiveRange/vscodeext-er-dev/commit/129e21b9ae90fb0cef0581748e4b04023486d4ef))
+* **deps-dev:**
+  *  bump @types/uuid from 9.0.8 to 10.0.0 ([39514c70](https://github.com/EffectiveRange/vscodeext-er-dev/commit/39514c700104677080e367408900dcc0bab54e91))
+  *  bump webpack-cli from 5.1.4 to 6.0.1 ([eea30f9f](https://github.com/EffectiveRange/vscodeext-er-dev/commit/eea30f9f02cdef0d6cdfc7e2f7b110e805e692be))
+  *  bump eslint-plugin-promise from 6.6.0 to 7.2.1 ([7be9763e](https://github.com/EffectiveRange/vscodeext-er-dev/commit/7be9763e24a63ee0d9832b345c4dda6dce529d54))
+  *  bump c8 from 9.1.0 to 10.1.3 ([e7c60634](https://github.com/EffectiveRange/vscodeext-er-dev/commit/e7c6063443673001aca1bf89e25d95083d7875be))
+  *  bump @types/node from 18.19.21 to 22.10.7 ([825f9e6e](https://github.com/EffectiveRange/vscodeext-er-dev/commit/825f9e6e0caf5b2bf5202c3ae96da067016b871b))
+* **deps:**  bump glob from 10.4.5 to 11.0.1 ([47b29c47](https://github.com/EffectiveRange/vscodeext-er-dev/commit/47b29c4786233133ba303d9c855e767d98294c7d))
+
+##### Bug Fixes
+
+*  ensure submodules are checked out in release workflow steps ([0f2d2ded](https://github.com/EffectiveRange/vscodeext-er-dev/commit/0f2d2dedd75a473c6f806c66505f68a70ba49160))
+*  update package resolutions from yarnpkg to npm registry and upgrade dependencies ([0fcc8b18](https://github.com/EffectiveRange/vscodeext-er-dev/commit/0fcc8b182b529963f51c6368f189cca1422a1aaa))
+
+##### Other Changes
+
+*  add Python project structure with necessary files and configurations ([b8547aea](https://github.com/EffectiveRange/vscodeext-er-dev/commit/b8547aea5241d328124bd7df1bfe037cdfd83e3b))
+
 ### 0.6.0 (2025-04-22)
 
 ##### Chores
