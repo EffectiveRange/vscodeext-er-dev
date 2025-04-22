@@ -18,3 +18,8 @@ coverage/**
 jest.config.js
 testwsp/**
 erdev-extension.code-workspace
+.github/
+.devcontainer/
+.gitmodules
+.c8rc
+packaging-tools/
