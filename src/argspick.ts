@@ -10,6 +10,7 @@ export class ArgsPick {
     private input?: string;
     private pick: vscode.QuickPick<vscode.QuickPickItem>;
     private pick_input: Promise<vscode.QuickPickItem | undefined>;
+    private static enabled = true;
     constructor() {
         let options: vscode.QuickPickItem[] = [];
         ArgsPick.cache.forEach((value, key) => {
@@ -51,8 +52,14 @@ export class ArgsPick {
         pick: vscode.QuickPick<vscode.QuickPickItem>,
         input: Promise<vscode.QuickPickItem | undefined>,
     ) {
+        if (!ArgsPick.enabled) {
+            return undefined;
+        }
         pick.show();
         return await input;
+    }
+    public static enableArgsPick(force: boolean) {
+        ArgsPick.enabled = force;
     }
 }
 

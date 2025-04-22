@@ -12,4 +12,5 @@ export interface ErDeviceModel {
 
 export interface ErDevApi {
     setActiveDevice: (model: ErDeviceModel) => void;
+    enableArgsPick: (enable: boolean) => void;
 }

@@ -11,6 +11,9 @@
         },
         {
             "path": "pyproj_wheel"
+        },
+        {
+            "path": "pyproj_dhvenv"
         }
     ],
     "settings": {}

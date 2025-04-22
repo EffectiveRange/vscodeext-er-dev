@@ -10,6 +10,7 @@ import { DispatchExecution } from './executiondispatch';
 import { SSHDeviceExecution } from './erdevexecutions';
 import { ErDevApi } from './api';
 import { ERExtension } from './erextension';
+import { ArgsPick } from './argspick';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -106,6 +107,9 @@ export function activate(context: vscode.ExtensionContext): ErDevApi {
     return {
         setActiveDevice: (m) => {
             model.setActiveDevice(m);
+        },
+        enableArgsPick: (enable) => {
+            ArgsPick.enableArgsPick(enable);
         },
     };
 }

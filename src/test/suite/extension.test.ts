@@ -18,9 +18,6 @@ suite('Extension Test Suite', () => {
 
     suiteSetup(async function (this: Mocha.Context) {
         this.timeout(100000);
-        const argsPickStub = sinon.stub(ArgsPick, 'get_pick_result').resolves({
-            label: '-c test',
-        });
     });
 
     setup(async function (this: Mocha.Context) {
@@ -44,10 +41,19 @@ suite('Extension Test Suite', () => {
         }
         const tabs: vscode.Tab[] = vscode.window.tabGroups.all.map((tg) => tg.tabs).flat();
         await vscode.window.tabGroups.close(tabs);
+
+        // Stub ArgsPick.get_pick_result
+        sinon.stub(ArgsPick, 'get_pick_result').resolves({
+            label: '-c test',
+        });
     });
+
     suiteTeardown(async () => {});
 
-    teardown(async function (this: Mocha.Context) {});
+    teardown(async function (this: Mocha.Context) {
+        // Restore Sinon stubs
+        sinon.restore();
+    });
 
     test('pack cmake project proj1', async () => {
         const wsp = getWorkspace('proj1');
@@ -211,6 +217,7 @@ suite('Extension Test Suite', () => {
         await vscode.commands.executeCommand('cmake.stop');
         const handle = await getExtensionHandle();
         const api = handle.exports as ErDevApi;
+        api.enableArgsPick(false);
         api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
         await vscode.commands.executeCommand('erdev.deployProject');
 
@@ -239,6 +246,7 @@ suite('Extension Test Suite', () => {
         await delay(5000);
         await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
         await endSession;
+        api.enableArgsPick(true);
         return true;
     });
 
