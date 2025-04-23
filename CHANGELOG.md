@@ -10,6 +10,12 @@
 
 *  update usage instructions and use opt-in workspace packaging script if exists ([bbf48465](https://github.com/EffectiveRange/vscodeext-er-dev/commit/bbf484659ba7b055606598fc651e38443a6d96a5))
 
+### 0.7.0 (2025-04-23)
+
+##### Bug Fixes
+
+*  update usage instructions and use opt-in workspace packaging script if exists ([bbf48465](https://github.com/EffectiveRange/vscodeext-er-dev/commit/bbf484659ba7b055606598fc651e38443a6d96a5))
+
 #### 0.6.1 (2025-04-22)
 
 ##### Chores
