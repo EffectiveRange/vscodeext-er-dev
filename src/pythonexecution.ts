@@ -116,7 +116,7 @@ export class PythonExecution extends IErDevExecutions {
                 };
             }
             if (addressInUseError !== code) {
-                return Promise.reject(`Failed to start debugpy. Error code${code}`);
+                return Promise.reject(`Failed to start debugpy. Error code:${code}`);
             }
         }
 

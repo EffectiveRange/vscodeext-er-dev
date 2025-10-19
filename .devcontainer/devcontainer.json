@@ -22,7 +22,8 @@
 				"amodio.tsl-problem-matcher",
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-				"ms-python.debugpy"
+				"ms-python.debugpy",
+				"hbenl.vscode-mocha-test-adapter"
 			]
 		}
 	},

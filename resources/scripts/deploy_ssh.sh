@@ -55,7 +55,7 @@ SSHARGS="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q $@"
 rsync -avzc --progress -e "$SSHARGS" $(echo $DEB_FILES_LIST | tr '\n' ' ') "$TARGET:/tmp/erdev/"
 
 if [ $IS_PYTHON == "true" ]; then
-    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo pip install --force-reinstall $DEB_FILES_NAMES"
+    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo pip install --break-system-packages --force-reinstall $DEB_FILES_NAMES"
 elif [ $TYPE == "quick" ]; then
     ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q  "$@" "$TARGET" "cd /tmp/erdev/ && sudo dpkg -i $DEB_FILES_NAMES"
 elif [ $TYPE == "all" ]; then

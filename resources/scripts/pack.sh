@@ -7,7 +7,7 @@ set -e -x
 
 SCRIPT_DIR=$(dirname "$0")  
 
-TYPE=$1
+TYPE=$1 
 shift 1
 
 if [ -z $TYPE ]; then
