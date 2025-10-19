@@ -148,16 +148,16 @@ export class PythonExecution extends IErDevExecutions {
         const [checkResult, copyResult] = await Promise.all([checkPromise, copyPromise]);
 
         if (checkResult !== 0) {
+            // FIXME: potentially use pipx or a venv to install debugpy
             const installExecResult = await sshExec(
                 this.erext.logChannel,
                 workspaceFolder,
                 device,
                 'sudo',
-                'python3',
-                '-m',
-                'pip',
+                'apt',
                 'install',
-                'debugpy',
+                '-y',
+                'python3-debugpy',
             );
             if (installExecResult !== 0) {
                 vscode.window.showWarningMessage(
