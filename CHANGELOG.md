@@ -1,3 +1,9 @@
+### 0.9.0 (2025-10-19)
+
+##### Chores
+
+*  update base image to bookworm ([79f8da75](https://github.com/EffectiveRange/vscodeext-er-dev/commit/79f8da755678bf3447d6bf51c6065df65a1ffd86))
+
 #### 0.8.1 (2025-10-18)
 
 ### 0.8.0 (2025-10-18)
