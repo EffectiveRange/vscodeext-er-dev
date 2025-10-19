@@ -32,6 +32,7 @@ suite('Extension Test Suite', () => {
                     'pip',
                     'uninstall',
                     '-y',
+                    '--break-system-packages',
                     wsp.name.replace('_', '-'),
                 ]);
             } else {
