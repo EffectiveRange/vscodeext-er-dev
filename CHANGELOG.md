@@ -1,3 +1,9 @@
+#### 0.9.3 (2025-10-19)
+
+##### Bug Fixes
+
+*  debugpy installation with apt instead of pip ([5951bbf8](https://github.com/EffectiveRange/vscodeext-er-dev/commit/5951bbf8005ea8c365d8009b2256af65b27a30b5))
+
 #### 0.9.2 (2025-10-19)
 
 ##### Chores
