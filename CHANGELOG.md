@@ -1,3 +1,9 @@
+#### 0.9.2 (2025-10-19)
+
+##### Chores
+
+*  update packaging tools ([0608d538](https://github.com/EffectiveRange/vscodeext-er-dev/commit/0608d538be63d1813547ca694a8349121b6975ab))
+
 #### 0.9.1 (2025-10-19)
 
 #### 0.9.1 (2025-10-19)
