@@ -51,7 +51,7 @@ jobs:
               run: echo "extension_path=$(ls -1 ${GITHUB_WORKSPACE}/build/erdev-*.vsix | head -n1)" >> $GITHUB_OUTPUT
             - name: Publish extension
               id: publish
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v5
               with:
                   name: vscode-extension
                   path: ${{ steps.extname.outputs.extension_path }}
