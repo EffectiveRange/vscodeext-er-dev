@@ -5,10 +5,12 @@
 # SPDX-License-Identifier: MIT
 set -e -x
 
-SCRIPT_DIR=$(dirname "$0")  
 
 TYPE=$1 
 shift 1
+
+PACKAGING_SCRIPT=$(which pack_$TYPE 2>/dev/null | head -n1 || true)
+
 
 if [ -z $TYPE ]; then
     echo "Usage: $0 <project type> <workspace dir> [<args>]"
@@ -28,4 +30,9 @@ if [ -e "$WSP_DIR/pack.sh" ]; then
     exit 0
 fi
 
-$SCRIPT_DIR/pack_$TYPE "$@"
+if [ -z $PACKAGING_SCRIPT ]; then
+    echo "Couldn't find packaging script for project type: $TYPE"
+    exit 1
+fi
+
+$PACKAGING_SCRIPT "$@"
