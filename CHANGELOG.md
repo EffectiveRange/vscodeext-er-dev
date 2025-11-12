@@ -1,3 +1,9 @@
+### 0.10.0 (2025-11-12)
+
+##### New Features
+
+* removed packaging tools submodule ([e19e27a3](https://github.com/EffectiveRange/vscodeext-er-dev/commit/e19e27a334e6e7e6995c5c1b594baef3acb6c886))
+
 #### 0.9.3 (2025-10-19)
 
 ##### Bug Fixes
