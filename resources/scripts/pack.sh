@@ -35,4 +35,22 @@ if [ -z $PACKAGING_SCRIPT ]; then
     exit 1
 fi
 
-$PACKAGING_SCRIPT "$@"
+
+if [ -f /home/crossbuilder/target/target ]; then
+    # this sets up target arch
+    source /home/crossbuilder/target/target
+    if [ -z $TARGET_ARCH ]; then
+        echo "TARGET_ARCH is not set even after sourcing /home/crossbuilder/target/target"
+        exit 1
+    fi
+else
+    TARGET_ARCH=$(dpkg --print-architecture)
+fi
+
+EXTRA_ARGS=""
+
+if [ "$TYPE" == "python" ]; then
+  EXTRA_ARGS="--target $TARGET_ARCH"
+fi
+
+$PACKAGING_SCRIPT $EXTRA_ARGS "$@"
