@@ -1,3 +1,9 @@
+### 0.11.0 (2026-01-12)
+
+##### Bug Fixes
+
+*  pass target arch to python packaging script ([2a1466b1](https://github.com/EffectiveRange/vscodeext-er-dev/commit/2a1466b147438459eea27cc82355c0276f9ef6eb))
+
 ### 0.10.0 (2025-11-12)
 
 ##### New Features
