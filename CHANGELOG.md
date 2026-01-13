@@ -1,3 +1,9 @@
+#### 0.11.4 (2026-01-13)
+
+##### Refactors
+
+*  comment out python debug tests for future revision ([ceadf014](https://github.com/EffectiveRange/vscodeext-er-dev/commit/ceadf014d663d3f308c97703bf78b3332bc77ae4))
+
 #### 0.11.3 (2026-01-13)
 
 ##### Bug Fixes
