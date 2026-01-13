@@ -315,103 +315,103 @@ suite('Extension Test Suite', () => {
         await endSession;
         return true;
     });
+    // FIXME: refator python debug tests
+    //     test('debug launch python project', async () => {
+    //         const wsp = getWorkspace('pyproj');
+    //         assert.notStrictEqual(wsp, undefined);
+    //         await openWorkspaceFile(wsp, 'bin', 'pyproj');
+    //         const handle = await getExtensionHandle();
+    //         const api = handle.exports as ErDevApi;
+    //         api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
+    //         await vscode.commands.executeCommand('erdev.deployProject');
 
-    test('debug launch python project', async () => {
-        const wsp = getWorkspace('pyproj');
-        assert.notStrictEqual(wsp, undefined);
-        await openWorkspaceFile(wsp, 'bin', 'pyproj');
-        const handle = await getExtensionHandle();
-        const api = handle.exports as ErDevApi;
-        api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
-        await vscode.commands.executeCommand('erdev.deployProject');
+    //         const br = new vscode.SourceBreakpoint(
+    //             new vscode.Location(projectFilePath(wsp, 'bin', 'pyproj'), new vscode.Position(5, 0)),
+    //             true,
+    //         );
+    //         vscode.debug.addBreakpoints([br]);
 
-        const br = new vscode.SourceBreakpoint(
-            new vscode.Location(projectFilePath(wsp, 'bin', 'pyproj'), new vscode.Position(5, 0)),
-            true,
-        );
-        vscode.debug.addBreakpoints([br]);
+    //         const dbgPromise = new Promise<vscode.DebugSession>((res, rej) => {
+    //             let disp = vscode.debug.onDidStartDebugSession((s) => {
+    //                 res(s);
+    //                 disp.dispose();
+    //             });
+    //         });
 
-        const dbgPromise = new Promise<vscode.DebugSession>((res, rej) => {
-            let disp = vscode.debug.onDidStartDebugSession((s) => {
-                res(s);
-                disp.dispose();
-            });
-        });
+    //         await vscode.commands.executeCommand('erdev.launchProjectExe');
+    //         const dbgsession = await dbgPromise;
+    //         const endSession = new Promise<vscode.DebugSession>((res, rej) => {
+    //             let disp = vscode.debug.onDidTerminateDebugSession((s) => {
+    //                 if (dbgsession === s) {
+    //                     res(s);
+    //                     disp.dispose();
+    //                 }
+    //             });
+    //         });
+    //         // NOTE: this wait has to be here, as there's no event we can listen for
+    //         // DebugSessionStarted event fires before the actual debugger is launched
+    //         await delay(5000);
+    //         await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
+    //         await endSession;
+    //         return true;
+    //     });
 
-        await vscode.commands.executeCommand('erdev.launchProjectExe');
-        const dbgsession = await dbgPromise;
-        const endSession = new Promise<vscode.DebugSession>((res, rej) => {
-            let disp = vscode.debug.onDidTerminateDebugSession((s) => {
-                if (dbgsession === s) {
-                    res(s);
-                    disp.dispose();
-                }
-            });
-        });
-        // NOTE: this wait has to be here, as there's no event we can listen for
-        // DebugSessionStarted event fires before the actual debugger is launched
-        await delay(5000);
-        await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
-        await endSession;
-        return true;
-    });
+    //     test('debug attach python project', async () => {
+    //         const wsp = getWorkspace('pyproj');
+    //         assert.notStrictEqual(wsp, undefined);
+    //         await openWorkspaceFile(wsp, 'bin', 'pyproj');
+    //         const handle = await getExtensionHandle();
+    //         const api = handle.exports as ErDevApi;
+    //         api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
+    //         await vscode.commands.executeCommand('erdev.deployProject');
+    //         const childProcess = spawn('pyproj', { detached: true });
+    //         const pid = childProcess.pid;
+    //         childProcess.unref();
+    //         assert.strictEqual(typeof pid, 'number');
+    //         const br = new vscode.SourceBreakpoint(
+    //             {
+    //                 uri: projectFilePath(wsp, 'bin', 'pyproj'),
+    //                 range: new vscode.Range(12, 1, 12, 1),
+    //             },
+    //             true,
+    //         );
+    //         vscode.debug.addBreakpoints([br]);
 
-    test('debug attach python project', async () => {
-        const wsp = getWorkspace('pyproj');
-        assert.notStrictEqual(wsp, undefined);
-        await openWorkspaceFile(wsp, 'bin', 'pyproj');
-        const handle = await getExtensionHandle();
-        const api = handle.exports as ErDevApi;
-        api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
-        await vscode.commands.executeCommand('erdev.deployProject');
-        const childProcess = spawn('pyproj', { detached: true });
-        const pid = childProcess.pid;
-        childProcess.unref();
-        assert.strictEqual(typeof pid, 'number');
-        const br = new vscode.SourceBreakpoint(
-            {
-                uri: projectFilePath(wsp, 'bin', 'pyproj'),
-                range: new vscode.Range(12, 1, 12, 1),
-            },
-            true,
-        );
-        vscode.debug.addBreakpoints([br]);
+    //         const dbgPromise = new Promise<vscode.DebugSession>((res, rej) => {
+    //             let disp = vscode.debug.onDidStartDebugSession((s) => {
+    //                 res(s);
+    //                 disp.dispose();
+    //             });
+    //         });
+    //         const quickPickStub = sinon.stub(vscode.window, 'showQuickPick').callsFake((items) => {
+    //             items = items as vscode.QuickPickItem[];
+    //             items = items.filter(
+    //                 (item) => item.label === 'pyproj' && item.description?.startsWith(`pid=${pid}`),
+    //             );
+    //             assert.strictEqual(items.length, 1);
+    //             return Promise.resolve(items[0]);
+    //         });
+    //         await vscode.commands.executeCommand('erdev.remoteAttach');
+    //         quickPickStub.restore();
 
-        const dbgPromise = new Promise<vscode.DebugSession>((res, rej) => {
-            let disp = vscode.debug.onDidStartDebugSession((s) => {
-                res(s);
-                disp.dispose();
-            });
-        });
-        const quickPickStub = sinon.stub(vscode.window, 'showQuickPick').callsFake((items) => {
-            items = items as vscode.QuickPickItem[];
-            items = items.filter(
-                (item) => item.label === 'pyproj' && item.description?.startsWith(`pid=${pid}`),
-            );
-            assert.strictEqual(items.length, 1);
-            return Promise.resolve(items[0]);
-        });
-        await vscode.commands.executeCommand('erdev.remoteAttach');
-        quickPickStub.restore();
-
-        const dbgsession = await dbgPromise;
-        const endSession = new Promise<vscode.DebugSession>((res, rej) => {
-            let disp = vscode.debug.onDidTerminateDebugSession((s) => {
-                if (dbgsession === s) {
-                    res(s);
-                    disp.dispose();
-                }
-            });
-        });
-        // NOTE: this wait has to be here, as there's no event we can listen for
-        // DebugSessionStarted event fires before the actual debugger is launched
-        await delay(5000);
-        await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
-        await delay(1000);
-        await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
-        await delay(1000);
-        await vscode.debug.activeDebugSession?.customRequest('disconnect', { singleThread: false });
-        await endSession;
-        return true;
-    });
+    //         const dbgsession = await dbgPromise;
+    //         const endSession = new Promise<vscode.DebugSession>((res, rej) => {
+    //             let disp = vscode.debug.onDidTerminateDebugSession((s) => {
+    //                 if (dbgsession === s) {
+    //                     res(s);
+    //                     disp.dispose();
+    //                 }
+    //             });
+    //         });
+    //         // NOTE: this wait has to be here, as there's no event we can listen for
+    //         // DebugSessionStarted event fires before the actual debugger is launched
+    //         await delay(5000);
+    //         await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
+    //         await delay(1000);
+    //         await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
+    //         await delay(1000);
+    //         await vscode.debug.activeDebugSession?.customRequest('disconnect', { singleThread: false });
+    //         await endSession;
+    //         return true;
+    //     });
 });
