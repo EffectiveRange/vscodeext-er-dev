@@ -20,7 +20,7 @@ on:
             - opened
             - reopened
     repository_dispatch:
-      types: [EffectiveRange/devc-extension]
+      types: [EffectiveRange/devc-erdev-vscodeext]
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.sha }}
@@ -31,7 +31,7 @@ jobs:
       name: Prepare
       uses: EffectiveRange/ci-workflows/.github/workflows/accept-repository-dispatch.yaml@v1_repodispatch
       with:
-        versioned_dispatch_type: EffectiveRange/devc-extension
+        versioned_dispatch_type: EffectiveRange/devc-erdev-vscodeext
         create_tag: false         
     build-n-upload-vsext:
         name: Build and publish VSCode extension
