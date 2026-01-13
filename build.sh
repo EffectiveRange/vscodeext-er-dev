@@ -15,5 +15,7 @@ if [ -z $DISPLAY ]; then
   xvfb-run -a -- yarn run test 
 else
   yarn run test 
-fi 
+fi
+git clean -xfd
+
 yarn run package

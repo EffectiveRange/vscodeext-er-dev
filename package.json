@@ -215,7 +215,7 @@
     "compile-tests": "yarn install &&  yarn run main-out && tsc -p . --outDir out",
     "watch": "yarn run main-out && tsc -watch -p ./",
     "prepackage": "rm -rf ./build && mkdir ./build",
-    "package": "vsce package --yarn --out ./build/",
+    "package": "yarn install && vsce package --yarn --out ./build/",
     "pretest": "yarn run compile-tests && yarn run lint",
     "watch-tests": "yarn run main-out && tsc -p . -w --outDir out",
     "test": "yarn run pretest && node ./out/test/runTest.js",
