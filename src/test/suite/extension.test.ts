@@ -322,11 +322,13 @@ suite('Extension Test Suite', () => {
     //         await openWorkspaceFile(wsp, 'bin', 'pyproj');
     //         const handle = await getExtensionHandle();
     //         const api = handle.exports as ErDevApi;
-    //         api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
+    //         api.setActiveDevice({
+    // id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
     //         await vscode.commands.executeCommand('erdev.deployProject');
 
     //         const br = new vscode.SourceBreakpoint(
-    //             new vscode.Location(projectFilePath(wsp, 'bin', 'pyproj'), new vscode.Position(5, 0)),
+    //             new vscode.Location(projectFilePath(
+    // wsp, 'bin', 'pyproj'), new vscode.Position(5, 0)),
     //             true,
     //         );
     //         vscode.debug.addBreakpoints([br]);
@@ -351,7 +353,8 @@ suite('Extension Test Suite', () => {
     //         // NOTE: this wait has to be here, as there's no event we can listen for
     //         // DebugSessionStarted event fires before the actual debugger is launched
     //         await delay(5000);
-    //         await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
+    //         await vscode.debug.activeDebugSession?.customRequest(
+    // 'continue', { singleThread: false });
     //         await endSession;
     //         return true;
     //     });
@@ -362,7 +365,8 @@ suite('Extension Test Suite', () => {
     //         await openWorkspaceFile(wsp, 'bin', 'pyproj');
     //         const handle = await getExtensionHandle();
     //         const api = handle.exports as ErDevApi;
-    //         api.setActiveDevice({ id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
+    //         api.setActiveDevice({
+    //  id: 'test', host: 'test', hostname: 'localhost', user: 'node' });
     //         await vscode.commands.executeCommand('erdev.deployProject');
     //         const childProcess = spawn('pyproj', { detached: true });
     //         const pid = childProcess.pid;
@@ -383,10 +387,12 @@ suite('Extension Test Suite', () => {
     //                 disp.dispose();
     //             });
     //         });
-    //         const quickPickStub = sinon.stub(vscode.window, 'showQuickPick').callsFake((items) => {
+    //         const quickPickStub = sinon.stub(vscode.window,
+    // 'showQuickPick').callsFake((items) => {
     //             items = items as vscode.QuickPickItem[];
     //             items = items.filter(
-    //                 (item) => item.label === 'pyproj' && item.description?.startsWith(`pid=${pid}`),
+    //                 (item) => item.label === 'pyproj' &&
+    // item.description?.startsWith(`pid=${pid}`),
     //             );
     //             assert.strictEqual(items.length, 1);
     //             return Promise.resolve(items[0]);
@@ -406,11 +412,14 @@ suite('Extension Test Suite', () => {
     //         // NOTE: this wait has to be here, as there's no event we can listen for
     //         // DebugSessionStarted event fires before the actual debugger is launched
     //         await delay(5000);
-    //         await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
+    //         await vscode.debug.activeDebugSession?.customRequest(
+    // 'continue', { singleThread: false });
     //         await delay(1000);
-    //         await vscode.debug.activeDebugSession?.customRequest('continue', { singleThread: false });
+    //         await vscode.debug.activeDebugSession?.customRequest(
+    // 'continue', { singleThread: false });
     //         await delay(1000);
-    //         await vscode.debug.activeDebugSession?.customRequest('disconnect', { singleThread: false });
+    //         await vscode.debug.activeDebugSession?.customRequest(
+    // 'disconnect', { singleThread: false });
     //         await endSession;
     //         return true;
     //     });
