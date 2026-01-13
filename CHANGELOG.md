@@ -1,3 +1,9 @@
+#### 0.11.5 (2026-01-13)
+
+##### Refactors
+
+*  fix line length ([ac0549df](https://github.com/EffectiveRange/vscodeext-er-dev/commit/ac0549df4f7ea12a25dc088c5aedc1808e829fa0))
+
 #### 0.11.4 (2026-01-13)
 
 ##### Refactors
