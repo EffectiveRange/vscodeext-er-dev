@@ -1,3 +1,9 @@
+#### 0.11.6 (2026-01-13)
+
+##### Bug Fixes
+
+*  ensure build directory is cleaned and package command installs dependencies ([a07704fd](https://github.com/EffectiveRange/vscodeext-er-dev/commit/a07704fd220b2df78cf1dd6a68839e3f105f9b34))
+
 #### 0.11.5 (2026-01-13)
 
 ##### Refactors
