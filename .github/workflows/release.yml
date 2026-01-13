@@ -19,15 +19,24 @@ on:
             - synchronize
             - opened
             - reopened
+    repository_dispatch:
+      types: [EffectiveRange/devc-extension]
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.sha }}
     cancel-in-progress: true
 
 jobs:
+    prepare_release:
+      name: Prepare
+      uses: EffectiveRange/ci-workflows/.github/workflows/accept-repository-dispatch.yaml@v1_repodispatch
+      with:
+        versioned_dispatch_type: EffectiveRange/devc-extension
+        create_tag: false         
     build-n-upload-vsext:
         name: Build and publish VSCode extension
         runs-on: ubuntu-latest
+        needs: [prepare_release]
         outputs:
             extension_id: ${{ steps.publish.outputs.artifact-id }}
             extension_url: ${{ steps.publish.outputs.artifact-url }}
@@ -35,7 +44,7 @@ jobs:
             contents: read
         steps:
             - name: Check out the repo
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   submodules: true
             - name: Build extension
@@ -44,7 +53,8 @@ jobs:
               with:
                   subFolder: '${{github.workspace}}'
                   push: never
-                  runCmd: /workspaces/vscodeext-er-dev/build.sh
+                  runCmd: |
+                    /workspaces/vscodeext-er-dev/build.sh
 
             - name: Emit Extension Name
               id: extname
@@ -58,7 +68,7 @@ jobs:
                   if-no-files-found: error
 
     create_release:
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && !github.event_name == 'repository_dispatch'
         name: Create Release
         runs-on: ubuntu-latest
         permissions:
@@ -86,7 +96,7 @@ jobs:
                       ${{ github.workspace }}/vscode-extension/*.vsix
 
     publish_extension:
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && !github.event_name == 'repository_dispatch'
         name: Publish Extension
         runs-on: ubuntu-latest
         needs: [build-n-upload-vsext]
