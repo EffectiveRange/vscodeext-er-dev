@@ -1,3 +1,9 @@
+#### 0.11.3 (2026-01-13)
+
+##### Bug Fixes
+
+*  disable wheel deployment test until refactored ([8b9155c0](https://github.com/EffectiveRange/vscodeext-er-dev/commit/8b9155c0d8eebd85feb8883b500f59f2f8ab5b1f))
+
 #### 0.11.2 (2026-01-13)
 
 #### 0.11.2 (2026-01-13)
